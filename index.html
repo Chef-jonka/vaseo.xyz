@@ -1,0 +1,510 @@
+#Vaseo - Code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vasil Andreev - Senior SEO Executive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 2rem;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: #6366f1;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #6366f1;
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        section {
+            min-height: 100vh;
+            padding: 6rem 2rem 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            position: relative;
+            text-align: center;
+        }
+
+        .profile-image-container {
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .profile-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 4px solid rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+            object-fit: cover;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease 0.2s backwards;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: #a0a0a0;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.4s backwards;
+        }
+
+        .hero .subtitle {
+            font-size: 1.1rem;
+            color: #707070;
+            animation: fadeInUp 1s ease 0.6s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .about-content {
+            max-width: 800px;
+            text-align: center;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #b0b0b0;
+        }
+
+        .experience-timeline {
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+        }
+
+        .experience-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .experience-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+        }
+
+        .experience-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .experience-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .experience-item .company {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .experience-item .date {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .experience-item p {
+            color: #b0b0b0;
+            line-height: 1.6;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .portfolio-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .portfolio-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .portfolio-content {
+            padding: 1.5rem;
+        }
+
+        .portfolio-item h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .portfolio-item p {
+            color: #b0b0b0;
+            font-size: 0.95rem;
+        }
+
+        .tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            background: rgba(102, 126, 234, 0.2);
+            color: #a0a8ff;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .contact-content {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .contact-content p {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            margin-bottom: 2rem;
+        }
+
+        .contact-links {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 0.8rem 2rem;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .contact-link:hover {
+            background: #667eea;
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-image {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#portfolio">Portfolio</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="profile-image-container">
+            <img src="https://i.imgur.com/placeholder.jpg" alt="Vasil Andreev" class="profile-image" id="profilePic">
+        </div>
+        <h1>Vasil Andreev</h1>
+        <p>Senior SEO Executive & Digital Growth Strategist</p>
+        <p class="subtitle">Driving organic growth through technical excellence and data-driven insights</p>
+    </section>
+
+    <section id="about">
+        <h2 class="section-title">About Me</h2>
+        <div class="about-content">
+            <p>I'm Vasil Andreev, an experienced Senior SEO Executive with a proven track record of driving organic growth for global brands and local businesses. With over three years in the industry, I specialize in optimizing websites to improve visibility, increase traffic, and achieve business objectives.</p>
+            <br>
+            <p>I've worked with large global companies across EMEA and the US, including Disney, Wella, Nioxin, Segro, and New Balance, as well as smaller local businesses. My expertise spans technical SEO, content strategy, and data-driven insights, leveraging tools such as Screaming Frog, Lumar, SEMrush, Ahrefs, Google Search Console, and Google Analytics.</p>
+            <br>
+            <p>Currently, I'm expanding my skill set in Python for SEO automation, exploring ways to streamline processes and enhance efficiency. Passionate about search and user experience, I thrive on solving complex SEO challenges and delivering measurable results.</p>
+        </div>
+    </section>
+
+    <section id="experience">
+        <h2 class="section-title">Work Experience</h2>
+        <div class="experience-timeline">
+            <div class="experience-item">
+                <h3>Senior SEO Executive</h3>
+                <div class="company">Brave Bison</div>
+                <div class="date">March 2024 - Present</div>
+                <p>Managing SEO strategies for diverse clients across various industries, focusing on driving organic growth and improving search engine rankings. Specializing in B2C and e-commerce SEO, implementing comprehensive technical optimization and content strategies to achieve measurable business results.</p>
+            </div>
+
+            <div class="experience-item">
+                <h3>Senior Technical SEO Executive</h3>
+                <div class="company">Zenith</div>
+                <div class="date">September 2022 - December 2023</div>
+                <p>Supported technical SEO consultancy for multiple client accounts, focusing on site migrations and conducting comprehensive technical audits. Communicated with clients and presented business cases for technical changes. Collaborated with development teams to implement technical SEO best practices including internal linking optimization, performance analysis, site speed audits, website redirects management, and site structure optimization.</p>
+            </div>
+
+            <div class="experience-item">
+                <h3>SEO Executive</h3>
+                <div class="company">Too Much Info - Digital Marketing Agency</div>
+                <div class="date">October 2021 - September 2022</div>
+                <p>Performed in-depth technical SEO audits and offered recommendations to improve site performance. Implemented SEO strategies for clients with a focus on technical optimization and performance tracking. Collaborated with cross-functional teams including development and content to ensure proper implementation of SEO recommendations. Conducted keyword research and competitor analysis using Google Search Console, Ahrefs, and SEMrush.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="portfolio">
+        <h2 class="section-title">Portfolio</h2>
+        <div class="portfolio-grid">
+            <div class="portfolio-item">
+                <div class="portfolio-image">📈</div>
+                <div class="portfolio-content">
+                    <h3>Technical SEO Optimization</h3>
+                    <p>Comprehensive site migrations, technical audits, and performance optimization for enterprise clients including global brands.</p>
+                    <div class="tags">
+                        <span class="tag">Technical SEO</span>
+                        <span class="tag">Site Migrations</span>
+                        <span class="tag">Performance</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-item">
+                <div class="portfolio-image">🔍</div>
+                <div class="portfolio-content">
+                    <h3>E-commerce Growth Strategy</h3>
+                    <p>Driving organic growth for B2C and e-commerce clients through data-driven SEO strategies and content optimization.</p>
+                    <div class="tags">
+                        <span class="tag">E-commerce SEO</span>
+                        <span class="tag">Content Strategy</span>
+                        <span class="tag">Analytics</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-item">
+                <div class="portfolio-image">🤖</div>
+                <div class="portfolio-content">
+                    <h3>Python SEO Automation</h3>
+                    <p>Developing automation tools and scripts to streamline SEO processes and enhance efficiency in daily workflows.</p>
+                    <div class="tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">Automation</span>
+                        <span class="tag">Innovation</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-item">
+                <div class="portfolio-image">🌐</div>
+                <div class="portfolio-content">
+                    <h3>Global Brand SEO</h3>
+                    <p>Working with international brands like Disney, Wella, Nioxin, and Segro across EMEA and US markets.</p>
+                    <div class="tags">
+                        <span class="tag">Enterprise SEO</span>
+                        <span class="tag">International</span>
+                        <span class="tag">Multi-market</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2 class="section-title">Get In Touch</h2>
+        <div class="contact-content">
+            <p>I'm always open to new opportunities and collaborations. Feel free to reach out!</p>
+            <div class="contact-links">
+                <a href="mailto:vasil.andreev@example.com" class="contact-link">Email</a>
+                <a href="https://www.linkedin.com/in/vasil-andreev-b34142219/" class="contact-link" target="_blank">LinkedIn</a>
+                <a href="https://github.com/vasilandreev" class="contact-link" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Vasil Andreev. Passionate about SEO, innovation, and continuous improvement.</p>
+    </footer>
+
+    <script>
+        // Load the uploaded image
+        const img = document.getElementById('profilePic');
+        // The image will be added via file upload or data URL
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // Add scroll animation for sections
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.experience-item, .portfolio-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
