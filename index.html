@@ -1,10 +1,10 @@
-#Vaseo - Code
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vasil Andreev - Senior SEO Executive</title>
+    <title>VASEO - SEO Consultant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Noto+Sans+JP:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,498 +13,580 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #0a0a0a;
-            color: #e0e0e0;
-            line-height: 1.6;
+            background: #fff;
+            font-family: 'Noto Sans JP', sans-serif;
+            color: #000;
             overflow-x: hidden;
         }
 
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1.5rem 2rem;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-        }
-
-        nav a {
-            color: #e0e0e0;
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: color 0.3s;
-            position: relative;
-        }
-
-        nav a:hover {
-            color: #6366f1;
-        }
-
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #6366f1;
-            transition: width 0.3s;
-        }
-
-        nav a:hover::after {
-            width: 100%;
-        }
-
-        section {
+        /* ======================== */
+        /* INTRO SECTION            */
+        /* ======================== */
+        .intro {
             min-height: 100vh;
-            padding: 6rem 2rem 4rem;
+            position: relative;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
+            padding: 40px;
+            border-bottom: 2px solid #000;
         }
 
-        .hero {
-            position: relative;
-            text-align: center;
-        }
-
-        .profile-image-container {
-            margin-bottom: 2rem;
-            animation: fadeInUp 1s ease;
-        }
-
-        .profile-image {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            border: 4px solid rgba(102, 126, 234, 0.3);
-            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
-            object-fit: cover;
-        }
-
-        .hero h1 {
-            font-size: 5rem;
+        .intro-title {
+            font-family: 'Caveat', cursive;
+            font-size: 8rem;
             font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: fadeInUp 1s ease 0.2s backwards;
-        }
-
-        .hero p {
-            font-size: 1.5rem;
-            color: #a0a0a0;
-            margin-bottom: 2rem;
-            animation: fadeInUp 1s ease 0.4s backwards;
-        }
-
-        .hero .subtitle {
-            font-size: 1.1rem;
-            color: #707070;
-            animation: fadeInUp 1s ease 0.6s backwards;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
+            letter-spacing: 5px;
             position: relative;
-            display: inline-block;
+            z-index: 10;
         }
 
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+        .intro-subtitle {
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            margin-top: 20px;
+            color: #333;
         }
 
-        .about-content {
-            max-width: 800px;
+        .intro-description {
+            font-family: 'Caveat', cursive;
+            font-size: 1.3rem;
+            margin-top: 30px;
             text-align: center;
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #b0b0b0;
+            max-width: 400px;
+            line-height: 1.6;
+            color: #555;
         }
 
-        .experience-timeline {
-            width: 100%;
-            max-width: 900px;
-            position: relative;
-        }
-
-        .experience-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .experience-item::before {
-            content: '';
+        .scroll-hint {
+            font-family: 'Caveat', cursive;
+            font-size: 1.2rem;
             position: absolute;
+            bottom: 40px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        /* Doodles */
+        .doodle {
+            position: absolute;
+            stroke: #000;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .doodle-search { top: 15%; left: 10%; width: 80px; height: 80px; }
+        .doodle-graph { top: 20%; right: 12%; width: 100px; height: 80px; }
+        .doodle-rocket { bottom: 25%; left: 8%; width: 70px; height: 100px; }
+        .doodle-screen { top: 60%; right: 10%; width: 90px; height: 70px; }
+        .doodle-star { width: 30px; height: 30px; }
+        .star-1 { top: 10%; left: 30%; }
+        .star-2 { top: 35%; right: 25%; }
+        .star-3 { bottom: 20%; left: 25%; }
+        .doodle-bulb { top: 40%; left: 18%; width: 50px; height: 70px; }
+        .doodle-squiggle { width: 100px; height: 30px; }
+        .squiggle-1 { top: 25%; left: 25%; }
+
+        .doodle-label {
+            font-family: 'Caveat', cursive;
+            font-size: 0.9rem;
+            position: absolute;
+            color: #666;
+        }
+
+        .label-seo { top: 28%; left: 8%; }
+        .label-growth { top: 32%; right: 10%; }
+        .label-ideas { top: 52%; left: 12%; }
+        .label-results { top: 72%; right: 8%; }
+
+        /* ======================== */
+        /* NAVIGATION               */
+        /* ======================== */
+        nav {
+            position: fixed;
             top: 0;
             left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, #667eea, #764ba2);
-        }
-
-        .experience-item:hover {
-            transform: translateX(10px);
-            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
-        }
-
-        .experience-item h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: #fff;
-        }
-
-        .experience-item .company {
-            color: #667eea;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .experience-item .date {
-            color: #888;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .experience-item p {
-            color: #b0b0b0;
-            line-height: 1.6;
-        }
-
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            width: 100%;
-        }
-
-        .portfolio-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-        }
-
-        .portfolio-item:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
-        }
-
-        .portfolio-image {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            right: 0;
+            background: #fff;
+            padding: 20px 40px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: rgba(255, 255, 255, 0.3);
+            z-index: 1000;
+            border-bottom: 2px solid #000;
         }
 
-        .portfolio-content {
-            padding: 1.5rem;
+        .logo {
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            font-weight: 700;
         }
 
-        .portfolio-item h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            color: #fff;
-        }
-
-        .portfolio-item p {
-            color: #b0b0b0;
-            font-size: 0.95rem;
-        }
-
-        .tags {
+        nav ul {
             display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
+            list-style: none;
+            gap: 40px;
         }
 
-        .tag {
-            background: rgba(102, 126, 234, 0.2);
-            color: #a0a8ff;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-        }
-
-        .contact-content {
-            text-align: center;
-            max-width: 600px;
-        }
-
-        .contact-content p {
-            font-size: 1.2rem;
-            color: #b0b0b0;
-            margin-bottom: 2rem;
-        }
-
-        .contact-links {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .contact-link {
-            color: #667eea;
+        nav a {
+            color: #000;
             text-decoration: none;
-            font-size: 1.1rem;
-            padding: 0.8rem 2rem;
-            border: 2px solid #667eea;
-            border-radius: 8px;
-            transition: all 0.3s;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
         }
 
-        .contact-link:hover {
-            background: #667eea;
-            color: #fff;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        nav a:hover {
+            text-decoration: underline;
         }
 
-        footer {
+        /* ======================== */
+        /* MANGA PANELS             */
+        /* ======================== */
+        .manga-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .panel-row {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .panel {
+            background: #fff;
+            border: 2px solid #000;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 25px;
+        }
+
+        /* Speech Bubble */
+        .bubble {
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 30px;
+            padding: 15px 20px;
+            display: inline-block;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 25px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #000;
+        }
+
+        .bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 27px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 10px solid #fff;
+            z-index: 1;
+        }
+
+        .bubble-no-tail::after,
+        .bubble-no-tail::before {
+            display: none;
+        }
+
+        /* Chapter Header */
+        .chapter-header {
             text-align: center;
-            padding: 2rem;
-            color: #666;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border: 2px solid #000;
+            margin-bottom: 4px;
         }
 
+        .chapter-number {
+            font-family: 'Caveat', cursive;
+            font-size: 1rem;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .chapter-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        /* Photo Panel */
+        .photo-panel {
+            min-height: 400px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .photo-panel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Side panels */
+        .side-panels {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .side-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Panel Dark */
+        .panel-dark {
+            background: #000;
+            color: #fff;
+        }
+
+        .panel-dark .bubble {
+            background: #000;
+            color: #fff;
+            border-color: #fff;
+        }
+
+        .panel-dark .bubble::after {
+            border-top-color: #fff;
+        }
+
+        .panel-dark .bubble::before {
+            border-top-color: #000;
+        }
+
+        /* Big Number */
+        .big-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4rem;
+            line-height: 1;
+        }
+
+        .big-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .panel-dark .big-label {
+            color: #999;
+        }
+
+        /* Brands List */
+        .brands-list {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            line-height: 1.8;
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tool-tag {
+            font-size: 0.75rem;
+            padding: 5px 12px;
+            border: 1px solid #000;
+            border-radius: 20px;
+        }
+
+        .panel-dark .tool-tag {
+            border-color: #fff;
+        }
+
+        /* Section Spacer */
+        .section-spacer {
+            height: 60px;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 3rem;
-            }
-
-            .hero p {
-                font-size: 1.2rem;
-            }
-
-            nav ul {
-                gap: 1rem;
-                flex-wrap: wrap;
-            }
-
-            .portfolio-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .profile-image {
-                width: 150px;
-                height: 150px;
-            }
+            .intro-title { font-size: 4rem; }
+            .panel-row { flex-direction: column; }
+            .photo-panel { min-height: 300px; }
+            .doodle { transform: scale(0.7); }
+            .big-number { font-size: 3rem; }
+            nav { padding: 15px 20px; }
+            nav ul { gap: 20px; }
+            nav a { font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
+
+    <!-- ==================== -->
+    <!-- NAVIGATION           -->
+    <!-- ==================== -->
     <nav>
+        <div class="logo">Vaseo</div>
         <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#experience">Experience</a></li>
-            <li><a href="#portfolio">Portfolio</a></li>
+            <li><a href="#chapter-01">About</a></li>
+            <li><a href="#chapter-02">Experience</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
     </nav>
 
-    <section id="home" class="hero">
-        <div class="profile-image-container">
-            <img src="https://i.imgur.com/placeholder.jpg" alt="Vasil Andreev" class="profile-image" id="profilePic">
-        </div>
-        <h1>Vasil Andreev</h1>
-        <p>Senior SEO Executive & Digital Growth Strategist</p>
-        <p class="subtitle">Driving organic growth through technical excellence and data-driven insights</p>
+    <!-- ==================== -->
+    <!-- INTRO SECTION        -->
+    <!-- ==================== -->
+    <section class="intro">
+
+        <!-- Doodles -->
+        <svg class="doodle doodle-search" viewBox="0 0 80 80">
+            <circle cx="30" cy="30" r="20"/>
+            <line x1="45" y1="45" x2="70" y2="70" stroke-linecap="round"/>
+        </svg>
+        <span class="doodle-label label-seo">SEO</span>
+
+        <svg class="doodle doodle-graph" viewBox="0 0 100 80">
+            <polyline points="10,70 30,50 50,60 70,30 90,10" stroke-linecap="round" stroke-linejoin="round"/>
+            <polygon points="85,5 95,15 90,10 85,20" fill="#000" stroke="none"/>
+        </svg>
+        <span class="doodle-label label-growth">growth</span>
+
+        <svg class="doodle doodle-rocket" viewBox="0 0 70 100">
+            <path d="M35,10 Q50,30 50,60 L45,70 L35,65 L25,70 L20,60 Q20,30 35,10 Z"/>
+            <circle cx="35" cy="40" r="8"/>
+            <path d="M25,70 L20,85 L35,75 L50,85 L45,70" stroke-linejoin="round"/>
+        </svg>
+
+        <svg class="doodle doodle-screen" viewBox="0 0 90 70">
+            <rect x="5" y="5" width="80" height="50" rx="3"/>
+            <line x1="45" y1="55" x2="45" y2="65"/>
+            <line x1="30" y1="65" x2="60" y2="65"/>
+            <line x1="20" y1="20" x2="50" y2="20"/>
+            <line x1="20" y1="30" x2="70" y2="30"/>
+            <line x1="20" y1="40" x2="40" y2="40"/>
+        </svg>
+        <span class="doodle-label label-results">results</span>
+
+        <svg class="doodle doodle-star star-1" viewBox="0 0 30 30">
+            <path d="M15,5 L17,12 L25,12 L19,17 L21,25 L15,20 L9,25 L11,17 L5,12 L13,12 Z"/>
+        </svg>
+        <svg class="doodle doodle-star star-2" viewBox="0 0 30 30">
+            <path d="M15,5 L17,12 L25,12 L19,17 L21,25 L15,20 L9,25 L11,17 L5,12 L13,12 Z"/>
+        </svg>
+        <svg class="doodle doodle-star star-3" viewBox="0 0 30 30">
+            <path d="M15,5 L17,12 L25,12 L19,17 L21,25 L15,20 L9,25 L11,17 L5,12 L13,12 Z"/>
+        </svg>
+
+        <svg class="doodle doodle-bulb" viewBox="0 0 50 70">
+            <path d="M25,5 Q45,5 45,30 Q45,45 35,50 L35,55 L15,55 L15,50 Q5,45 5,30 Q5,5 25,5 Z"/>
+            <line x1="15" y1="60" x2="35" y2="60"/>
+            <line x1="18" y1="65" x2="32" y2="65"/>
+            <line x1="25" y1="20" x2="25" y2="35"/>
+            <line x1="18" y1="27" x2="32" y2="27"/>
+        </svg>
+        <span class="doodle-label label-ideas">ideas</span>
+
+        <svg class="doodle doodle-squiggle squiggle-1" viewBox="0 0 100 30">
+            <path d="M5,15 Q20,5 35,15 Q50,25 65,15 Q80,5 95,15" stroke-linecap="round"/>
+        </svg>
+
+        <!-- Main Title -->
+        <h1 class="intro-title">Vaseo</h1>
+        <p class="intro-subtitle">SEO Consultant & Strategist</p>
+        <p class="intro-description">
+            Helping businesses grow through<br>
+            search engine optimization,<br>
+            strategy & data-driven results.
+        </p>
+
+        <p class="scroll-hint">↓ scroll down ↓</p>
     </section>
 
-    <section id="about">
-        <h2 class="section-title">About Me</h2>
-        <div class="about-content">
-            <p>I'm Vasil Andreev, an experienced Senior SEO Executive with a proven track record of driving organic growth for global brands and local businesses. With over three years in the industry, I specialize in optimizing websites to improve visibility, increase traffic, and achieve business objectives.</p>
-            <br>
-            <p>I've worked with large global companies across EMEA and the US, including Disney, Wella, Nioxin, Segro, and New Balance, as well as smaller local businesses. My expertise spans technical SEO, content strategy, and data-driven insights, leveraging tools such as Screaming Frog, Lumar, SEMrush, Ahrefs, Google Search Console, and Google Analytics.</p>
-            <br>
-            <p>Currently, I'm expanding my skill set in Python for SEO automation, exploring ways to streamline processes and enhance efficiency. Passionate about search and user experience, I thrive on solving complex SEO challenges and delivering measurable results.</p>
+    <!-- ==================== -->
+    <!-- CHAPTER 01           -->
+    <!-- ==================== -->
+    <main class="manga-page">
+
+        <!-- Chapter 01 Header -->
+        <div class="chapter-header" id="chapter-01">
+            <p class="chapter-number">Chapter 01</p>
+            <h2 class="chapter-title">The One Behind the Search</h2>
         </div>
-    </section>
 
-    <section id="experience">
-        <h2 class="section-title">Work Experience</h2>
-        <div class="experience-timeline">
-            <div class="experience-item">
-                <h3>Senior SEO Executive</h3>
-                <div class="company">Brave Bison</div>
-                <div class="date">March 2024 - Present</div>
-                <p>Managing SEO strategies for diverse clients across various industries, focusing on driving organic growth and improving search engine rankings. Specializing in B2C and e-commerce SEO, implementing comprehensive technical optimization and content strategies to achieve measurable business results.</p>
+        <!-- Photo + Intro Panels -->
+        <div class="panel-row">
+            <div class="panel photo-panel" style="flex: 1.2;">
+                <img src="photo.jpg" alt="Vasil Andreev">
             </div>
-
-            <div class="experience-item">
-                <h3>Senior Technical SEO Executive</h3>
-                <div class="company">Zenith</div>
-                <div class="date">September 2022 - December 2023</div>
-                <p>Supported technical SEO consultancy for multiple client accounts, focusing on site migrations and conducting comprehensive technical audits. Communicated with clients and presented business cases for technical changes. Collaborated with development teams to implement technical SEO best practices including internal linking optimization, performance analysis, site speed audits, website redirects management, and site structure optimization.</p>
-            </div>
-
-            <div class="experience-item">
-                <h3>SEO Executive</h3>
-                <div class="company">Too Much Info - Digital Marketing Agency</div>
-                <div class="date">October 2021 - September 2022</div>
-                <p>Performed in-depth technical SEO audits and offered recommendations to improve site performance. Implemented SEO strategies for clients with a focus on technical optimization and performance tracking. Collaborated with cross-functional teams including development and content to ensure proper implementation of SEO recommendations. Conducted keyword research and competitor analysis using Google Search Console, Ahrefs, and SEMrush.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="portfolio">
-        <h2 class="section-title">Portfolio</h2>
-        <div class="portfolio-grid">
-            <div class="portfolio-item">
-                <div class="portfolio-image">📈</div>
-                <div class="portfolio-content">
-                    <h3>Technical SEO Optimization</h3>
-                    <p>Comprehensive site migrations, technical audits, and performance optimization for enterprise clients including global brands.</p>
-                    <div class="tags">
-                        <span class="tag">Technical SEO</span>
-                        <span class="tag">Site Migrations</span>
-                        <span class="tag">Performance</span>
+            <div class="side-panels">
+                <div class="panel side-panel">
+                    <div class="bubble">
+                        Hey, I'm Vaseo — an SEO specialist helping brands get discovered online.
+                    </div>
+                </div>
+                <div class="panel side-panel panel-dark">
+                    <div class="bubble">
+                        I believe in strategy over shortcuts. Real results take time, but they last.
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="portfolio-item">
-                <div class="portfolio-image">🔍</div>
-                <div class="portfolio-content">
-                    <h3>E-commerce Growth Strategy</h3>
-                    <p>Driving organic growth for B2C and e-commerce clients through data-driven SEO strategies and content optimization.</p>
-                    <div class="tags">
-                        <span class="tag">E-commerce SEO</span>
-                        <span class="tag">Content Strategy</span>
-                        <span class="tag">Analytics</span>
-                    </div>
-                </div>
-            </div>
+        <!-- Spacer -->
+        <div class="section-spacer"></div>
 
-            <div class="portfolio-item">
-                <div class="portfolio-image">🤖</div>
-                <div class="portfolio-content">
-                    <h3>Python SEO Automation</h3>
-                    <p>Developing automation tools and scripts to streamline SEO processes and enhance efficiency in daily workflows.</p>
-                    <div class="tags">
-                        <span class="tag">Python</span>
-                        <span class="tag">Automation</span>
-                        <span class="tag">Innovation</span>
-                    </div>
-                </div>
-            </div>
+        <!-- ==================== -->
+        <!-- CHAPTER 02           -->
+        <!-- ==================== -->
 
-            <div class="portfolio-item">
-                <div class="portfolio-image">🌐</div>
-                <div class="portfolio-content">
-                    <h3>Global Brand SEO</h3>
-                    <p>Working with international brands like Disney, Wella, Nioxin, and Segro across EMEA and US markets.</p>
-                    <div class="tags">
-                        <span class="tag">Enterprise SEO</span>
-                        <span class="tag">International</span>
-                        <span class="tag">Multi-market</span>
-                    </div>
+        <!-- Chapter 02 Header -->
+        <div class="chapter-header" id="chapter-02">
+            <p class="chapter-number">Chapter 02</p>
+            <h2 class="chapter-title">The Experience</h2>
+        </div>
+
+        <!-- Row 1: Intro bubble -->
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <div class="bubble bubble-no-tail" style="max-width: 100%;">
+                    I'm Vasil Andreev, a Senior SEO Executive with a proven track record of driving organic growth for global brands and local businesses alike.
                 </div>
             </div>
         </div>
-    </section>
 
-    <section id="contact">
-        <h2 class="section-title">Get In Touch</h2>
-        <div class="contact-content">
-            <p>I'm always open to new opportunities and collaborations. Feel free to reach out!</p>
-            <div class="contact-links">
-                <a href="mailto:vasil.andreev@example.com" class="contact-link">Email</a>
-                <a href="https://www.linkedin.com/in/vasil-andreev-b34142219/" class="contact-link" target="_blank">LinkedIn</a>
-                <a href="https://github.com/vasilandreev" class="contact-link" target="_blank">GitHub</a>
+        <!-- Row 2: Stats -->
+        <div class="panel-row">
+            <div class="panel" style="flex: 1; text-align: center;">
+                <p class="big-number">3+</p>
+                <p class="big-label">Years in the industry</p>
+            </div>
+            <div class="panel panel-dark" style="flex: 1; text-align: center;">
+                <p class="big-number">EMEA</p>
+                <p class="big-label">& US markets</p>
+            </div>
+            <div class="panel" style="flex: 1; text-align: center;">
+                <p class="big-number">10+</p>
+                <p class="big-label">Global brands</p>
             </div>
         </div>
-    </section>
 
-    <footer>
-        <p>&copy; 2026 Vasil Andreev. Passionate about SEO, innovation, and continuous improvement.</p>
-    </footer>
+        <!-- Row 3: Brands worked with -->
+        <div class="panel-row">
+            <div class="panel panel-dark" style="flex: 1;">
+                <div class="bubble bubble-no-tail" style="margin-bottom: 20px;">
+                    Brands I've worked with:
+                </div>
+                <p class="brands-list">
+                    Disney · Wella · Nioxin · Segro · New Balance
+                </p>
+            </div>
+        </div>
+
+        <!-- Row 4: Specialization + Tools -->
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <div class="bubble bubble-no-tail" style="margin-bottom: 15px;">
+                    My expertise spans:
+                </div>
+                <p style="font-size: 0.9rem; line-height: 1.8;">
+                    Technical SEO<br>
+                    Content Strategy<br>
+                    Data-Driven Insights
+                </p>
+            </div>
+            <div class="panel" style="flex: 1.5;">
+                <div class="bubble bubble-no-tail" style="margin-bottom: 15px;">
+                    Tools I use daily:
+                </div>
+                <div class="tools-grid">
+                    <span class="tool-tag">Screaming Frog</span>
+                    <span class="tool-tag">Lumar</span>
+                    <span class="tool-tag">SEMrush</span>
+                    <span class="tool-tag">Ahrefs</span>
+                    <span class="tool-tag">Google Search Console</span>
+                    <span class="tool-tag">Google Analytics</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 5: Currently learning -->
+        <div class="panel-row">
+            <div class="panel panel-dark" style="flex: 1;">
+                <div class="bubble">
+                    Currently expanding my skills in Python for SEO automation — streamlining processes and enhancing efficiency.
+                </div>
+            </div>
+            <div class="panel" style="flex: 1;">
+                <div class="bubble">
+                    I thrive on solving complex SEO challenges and delivering measurable results.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spacer -->
+        <div class="section-spacer"></div>
+
+        <!-- ==================== -->
+        <!-- CONTACT              -->
+        <!-- ==================== -->
+        <div class="chapter-header" id="contact">
+            <p class="chapter-number">To be continued...</p>
+            <h2 class="chapter-title">Get in Touch</h2>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel" style="flex: 1; text-align: center;">
+                <div class="bubble bubble-no-tail" style="margin: 0 auto;">
+                    Ready to improve your search rankings? Let's talk.
+                </div>
+                <div style="margin-top: 30px; display: flex; gap: 20px; justify-content: center;">
+                    <a href="mailto:hello@vaseo.xyz" style="color: #000; text-decoration: none; border-bottom: 1px solid #000; padding-bottom: 2px;">Email</a>
+                    <a href="https://linkedin.com" style="color: #000; text-decoration: none; border-bottom: 1px solid #000; padding-bottom: 2px;">LinkedIn</a>
+                </div>
+            </div>
+        </div>
+
+    </main>
 
     <script>
-        // Load the uploaded image
-        const img = document.getElementById('profilePic');
-        // The image will be added via file upload or data URL
-
-        // Smooth scrolling for navigation links
+        // Smooth scrolling for nav links
         document.querySelectorAll('nav a').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                const navHeight = document.querySelector('nav').offsetHeight;
+                const targetPosition = target.offsetTop - navHeight - 20;
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
             });
-        });
-
-        // Add scroll animation for sections
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.experience-item, .portfolio-item').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(el);
         });
     </script>
+
 </body>
 </html>
