@@ -325,6 +325,171 @@
             border-color: #fff;
         }
 
+        /* Services */
+        .service-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            opacity: 0.2;
+            line-height: 1;
+        }
+
+        .service-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            margin: 10px 0;
+        }
+
+        .service-desc {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .panel-dark .service-desc {
+            color: #999;
+        }
+
+        /* Process Steps */
+        .step-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            opacity: 0.15;
+            line-height: 1;
+        }
+
+        .step-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            margin: 8px 0;
+        }
+
+        .step-desc {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .panel-dark .step-number {
+            opacity: 0.3;
+        }
+
+        .panel-dark .step-desc {
+            color: #999;
+        }
+
+        /* ======================== */
+        /* FOOTER                   */
+        /* ======================== */
+        footer {
+            background: #f5f5f5;
+            border-top: 2px solid #000;
+            padding: 60px 40px 30px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .footer-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-column h4 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            color: #000;
+            text-decoration: underline;
+            font-size: 0.9rem;
+        }
+
+        .footer-column a:hover {
+            color: #666;
+        }
+
+        .footer-location {
+            font-size: 0.9rem;
+        }
+
+        .footer-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+
+        .footer-social a {
+            color: #000;
+            text-decoration: underline;
+            font-size: 0.9rem;
+        }
+
+        .footer-bottom {
+            max-width: 900px;
+            margin: 50px auto 0;
+            padding-top: 20px;
+            border-top: 2px solid #000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-bottom p {
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .footer-bottom p a {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        .footer-cta {
+            background: #000;
+            color: #fff;
+            padding: 12px 25px;
+            text-decoration: none;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        .footer-cta:hover {
+            background: #333;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
         /* Section Spacer */
         .section-spacer {
             height: 60px;
@@ -353,6 +518,8 @@
         <ul>
             <li><a href="#chapter-01">About</a></li>
             <li><a href="#chapter-02">Experience</a></li>
+            <li><a href="#chapter-03">Services</a></li>
+            <li><a href="#chapter-04">Process</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
     </nav>
@@ -551,6 +718,133 @@
         <div class="section-spacer"></div>
 
         <!-- ==================== -->
+        <!-- CHAPTER 03           -->
+        <!-- ==================== -->
+
+        <!-- Chapter 03 Header -->
+        <div class="chapter-header" id="chapter-03">
+            <p class="chapter-number">Chapter 03</p>
+            <h2 class="chapter-title">The Services</h2>
+        </div>
+
+        <!-- Row 1: Intro -->
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <div class="bubble bubble-no-tail" style="max-width: 100%;">
+                    Every business is different. I offer tailored SEO solutions to help you rank higher and grow organically.
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2: Services Grid -->
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <p class="service-number">01</p>
+                <p class="service-title">SEO Audit</p>
+                <p class="service-desc">Comprehensive analysis of your website's health, identifying issues and opportunities for improvement.</p>
+            </div>
+            <div class="panel panel-dark" style="flex: 1;">
+                <p class="service-number">02</p>
+                <p class="service-title">Keyword Strategy</p>
+                <p class="service-desc">Research and targeting the right keywords your audience is searching for.</p>
+            </div>
+        </div>
+
+        <!-- Row 3: More Services -->
+        <div class="panel-row">
+            <div class="panel panel-dark" style="flex: 1;">
+                <p class="service-number">03</p>
+                <p class="service-title">Technical SEO</p>
+                <p class="service-desc">Site speed, structure, indexing, and core web vitals optimization.</p>
+            </div>
+            <div class="panel" style="flex: 1;">
+                <p class="service-number">04</p>
+                <p class="service-title">Content Strategy</p>
+                <p class="service-desc">Creating content that ranks, engages, and converts visitors into customers.</p>
+            </div>
+        </div>
+
+        <!-- Row 4: CTA -->
+        <div class="panel-row">
+            <div class="panel" style="flex: 1; text-align: center;">
+                <div class="bubble bubble-no-tail" style="margin: 0 auto;">
+                    Need something specific? Let's discuss your project.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spacer -->
+        <div class="section-spacer"></div>
+
+        <!-- ==================== -->
+        <!-- CHAPTER 04           -->
+        <!-- ==================== -->
+
+        <!-- Chapter 04 Header -->
+        <div class="chapter-header" id="chapter-04">
+            <p class="chapter-number">Chapter 04</p>
+            <h2 class="chapter-title">The Process</h2>
+        </div>
+
+        <!-- Row 1: Intro -->
+        <div class="panel-row">
+            <div class="panel panel-dark" style="flex: 1;">
+                <div class="bubble bubble-no-tail" style="max-width: 100%;">
+                    A clear, structured approach to getting you results.
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2: Steps 1-2 -->
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <p class="step-number">01</p>
+                <p class="step-title">Discovery</p>
+                <p class="step-desc">Understanding your business, goals, and current SEO performance.</p>
+            </div>
+            <div class="panel" style="flex: 1;">
+                <p class="step-number">02</p>
+                <p class="step-title">Audit</p>
+                <p class="step-desc">Deep dive into your site's technical health, content, and backlinks.</p>
+            </div>
+        </div>
+
+        <!-- Row 3: Step 3 (full width - main strategy) -->
+        <div class="panel-row">
+            <div class="panel panel-dark" style="flex: 1; text-align: center;">
+                <p class="step-number" style="opacity: 0.3;">03</p>
+                <p class="step-title" style="font-size: 1.8rem;">Strategy</p>
+                <p class="step-desc">Custom roadmap tailored to your goals, timeline, and budget.</p>
+            </div>
+        </div>
+
+        <!-- Row 4: Steps 4-5 -->
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <p class="step-number">04</p>
+                <p class="step-title">Implementation</p>
+                <p class="step-desc">Executing optimizations — technical fixes, content updates, and more.</p>
+            </div>
+            <div class="panel" style="flex: 1;">
+                <p class="step-number">05</p>
+                <p class="step-title">Reporting</p>
+                <p class="step-desc">Transparent tracking of rankings, traffic, and ROI.</p>
+            </div>
+        </div>
+
+        <!-- Row 5: Closing -->
+        <div class="panel-row">
+            <div class="panel" style="flex: 1; text-align: center;">
+                <div class="bubble bubble-no-tail" style="margin: 0 auto;">
+                    Rinse and repeat. SEO is a continuous journey, not a one-time fix.
+                </div>
+            </div>
+        </div>
+
+        <!-- Spacer -->
+        <div class="section-spacer"></div>
+
+        <!-- ==================== -->
         <!-- CONTACT              -->
         <!-- ==================== -->
         <div class="chapter-header" id="contact">
@@ -571,6 +865,43 @@
         </div>
 
     </main>
+
+    <!-- ==================== -->
+    <!-- FOOTER               -->
+    <!-- ==================== -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>PAGES</h4>
+                <a href="#chapter-01">About</a>
+                <a href="#chapter-02">Experience</a>
+                <a href="#chapter-03">Services</a>
+                <a href="#chapter-04">Process</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="footer-column">
+                <h4>SERVICES</h4>
+                <a href="#chapter-03">SEO Audit</a>
+                <a href="#chapter-03">Keyword Strategy</a>
+                <a href="#chapter-03">Technical SEO</a>
+                <a href="#chapter-03">Content Strategy</a>
+            </div>
+            <div class="footer-column">
+                <h4>LET'S CONNECT</h4>
+                <p class="footer-location">📍 London, United Kingdom</p>
+                <p class="footer-location">📍 Sofia, Bulgaria</p>
+                <p class="footer-label">Follow me:</p>
+                <div class="footer-social">
+                    <a href="https://linkedin.com/in/yourprofile">LinkedIn</a>
+                    <a href="https://github.com/yourprofile">GitHub</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 <a href="#">Vasil Andreev</a>. All rights reserved.</p>
+            <a href="https://linkedin.com/in/yourprofile" class="footer-cta">FOLLOW ON LINKEDIN</a>
+        </div>
+    </footer>
 
     <script>
         // Smooth scrolling for nav links
