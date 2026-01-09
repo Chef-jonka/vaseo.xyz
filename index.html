@@ -533,6 +533,207 @@
             }
         }
 
+        /* Page Peel Effect */
+        .flip-card-container {
+            position: relative;
+            width: 100%;
+            min-height: 350px;
+            cursor: pointer;
+            perspective: 1200px;
+            overflow: visible;
+        }
+
+        .flip-card-back-layer {
+            position: relative;
+            width: 100%;
+            min-height: 350px;
+            background: #fff;
+            color: #000;
+            border: 2px solid #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 25px;
+            z-index: 1;
+        }
+
+        .flip-card-page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 350px;
+            background: #000;
+            color: #fff;
+            border: 2px solid #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 25px;
+            transform-origin: top left;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        clip-path 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 2;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        }
+
+        /* Hover hint */
+        .flip-card-page:hover::after {
+            opacity: 0.8;
+        }
+
+        /* Peeled state */
+        .flip-card-container.flipped .flip-card-page {
+            transform:
+                translateX(-15%)
+                translateY(-20%)
+                rotateX(25deg)
+                rotateY(-10deg)
+                rotateZ(-8deg)
+                scale(0.85);
+            clip-path: polygon(0 0, 100% 0, 85% 85%, 0 100%);
+        }
+
+        /* Page curl corner indicator */
+        .flip-card-page::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background:
+                linear-gradient(135deg, transparent 45%, rgba(255,255,255,0.1) 45%, rgba(255,255,255,0.15) 50%, transparent 50%);
+            opacity: 0.5;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        /* Shadow underneath peeling page */
+        .flip-card-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(ellipse at bottom right, rgba(0,0,0,0.4) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .flip-card-container.flipped .flip-card-page::before {
+            opacity: 1;
+        }
+
+        /* Shadow on back layer */
+        .flip-card-back-layer::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: 40%;
+            bottom: 40%;
+            background:
+                radial-gradient(ellipse at top left, rgba(0,0,0,0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .flip-card-container.flipped .flip-card-back-layer::before {
+            opacity: 1;
+        }
+
+        /* Brand Cards Grid */
+        .brands-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .brand-card {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .brand-card:hover {
+            background: #fff;
+            border-color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .flip-card-container.flipped .brand-card {
+            animation: brandFadeIn 0.5s ease forwards;
+        }
+
+        .flip-card-container.flipped .brand-card:nth-child(1) { animation-delay: 0.3s; }
+        .flip-card-container.flipped .brand-card:nth-child(2) { animation-delay: 0.4s; }
+        .flip-card-container.flipped .brand-card:nth-child(3) { animation-delay: 0.5s; }
+        .flip-card-container.flipped .brand-card:nth-child(4) { animation-delay: 0.6s; }
+        .flip-card-container.flipped .brand-card:nth-child(5) { animation-delay: 0.7s; }
+
+        @keyframes brandFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .brand-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+            color: #000;
+            margin-bottom: 5px;
+        }
+
+        .brand-type {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .flip-hint {
+            font-family: 'Caveat', cursive;
+            font-size: 0.9rem;
+            color: #999;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .flip-card-front .flip-hint {
+            color: #666;
+        }
+
+        .click-to-reveal {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            text-align: center;
+            margin-top: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
         /* Section Spacer */
         .section-spacer {
             height: 60px;
@@ -755,15 +956,96 @@
             </div>
         </div>
 
-        <!-- Row 3: Brands worked with -->
+        <!-- Row 3: Brands worked with - Flip Card -->
         <div class="panel-row">
-            <div class="panel panel-dark" style="flex: 1;">
-                <div class="bubble bubble-no-tail" style="margin-bottom: 20px;">
-                    Brands I've worked with:
+            <div class="panel flip-card-container" style="flex: 1; padding: 0; overflow: visible; position: relative;" onclick="this.classList.toggle('flipped')">
+
+                <!-- Back Layer (Always visible, shows brands) -->
+                <div class="flip-card-back-layer">
+                    <p style="font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 2px; margin-bottom: 15px; text-align: center;">
+                        BRANDS I'VE WORKED WITH
+                    </p>
+
+                    <div class="brands-grid">
+                        <div class="brand-card">
+                            <div class="brand-name">Disney</div>
+                            <div class="brand-type">E-commerce · Global</div>
+                        </div>
+                        <div class="brand-card">
+                            <div class="brand-name">Wella</div>
+                            <div class="brand-type">Beauty · EMEA</div>
+                        </div>
+                        <div class="brand-card">
+                            <div class="brand-name">Nioxin</div>
+                            <div class="brand-type">Hair Care · US</div>
+                        </div>
+                        <div class="brand-card">
+                            <div class="brand-name">Segro</div>
+                            <div class="brand-type">Real Estate · UK</div>
+                        </div>
+                        <div class="brand-card">
+                            <div class="brand-name">New Balance</div>
+                            <div class="brand-type">Sportswear · Global</div>
+                        </div>
+                    </div>
+
+                    <p class="flip-hint" style="color: #666;">👆 Tap the page to cover</p>
                 </div>
-                <p class="brands-list">
-                    Disney · Wella · Nioxin · Segro · New Balance
-                </p>
+
+                <!-- Front Page (Flips away to reveal brands) -->
+                <div class="flip-card-page">
+                    <!-- Manga corner brackets -->
+                    <div style="position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; border-top: 3px solid #fff; border-left: 3px solid #fff;"></div>
+                    <div style="position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-top: 3px solid #fff; border-right: 3px solid #fff;"></div>
+                    <div style="position: absolute; bottom: 10px; left: 10px; width: 30px; height: 30px; border-bottom: 3px solid #fff; border-left: 3px solid #fff;"></div>
+                    <div style="position: absolute; bottom: 10px; right: 10px; width: 30px; height: 30px; border-bottom: 3px solid #fff; border-right: 3px solid #fff;"></div>
+
+                    <!-- Action lines background -->
+                    <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.15; z-index: 0;" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <line x1="50" y1="50" x2="0" y2="0" stroke="#fff" stroke-width="0.5"/>
+                        <line x1="50" y1="50" x2="100" y2="0" stroke="#fff" stroke-width="0.5"/>
+                        <line x1="50" y1="50" x2="0" y2="100" stroke="#fff" stroke-width="0.5"/>
+                        <line x1="50" y1="50" x2="100" y2="100" stroke="#fff" stroke-width="0.5"/>
+                        <line x1="50" y1="50" x2="0" y2="50" stroke="#fff" stroke-width="0.5"/>
+                        <line x1="50" y1="50" x2="100" y2="50" stroke="#fff" stroke-width="0.5"/>
+                        <line x1="50" y1="50" x2="50" y2="0" stroke="#fff" stroke-width="0.5"/>
+                        <line x1="50" y1="50" x2="50" y2="100" stroke="#fff" stroke-width="0.5"/>
+                    </svg>
+
+                    <div style="text-align: center; position: relative; z-index: 1;">
+                        <!-- Manga badge -->
+                        <div style="display: inline-block; background: #fff; color: #000; padding: 5px 15px; font-family: 'Bebas Neue', sans-serif; font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 15px; transform: rotate(-2deg);">
+                            CLIENT ROSTER
+                        </div>
+
+                        <p style="font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 4px; margin-bottom: 10px; text-shadow: 3px 3px 0px rgba(255,255,255,0.2);">
+                            PORTFOLIO
+                        </p>
+
+                        <p style="font-family: 'Caveat', cursive; font-size: 1.2rem; color: #ccc; margin-bottom: 20px;">
+                            Global brands & growing businesses
+                        </p>
+
+                        <!-- Manga-style emphasis lines -->
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0;">
+                            <div style="width: 40px; height: 2px; background: #fff;"></div>
+                            <p style="font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 3px;">
+                                10+ BRANDS
+                            </p>
+                            <div style="width: 40px; height: 2px; background: #fff;"></div>
+                        </div>
+
+                        <!-- Manga sound effect style -->
+                        <p style="font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 4px; color: #fff; text-shadow: 2px 2px 0 #666, -1px -1px 0 #666, 1px -1px 0 #666, -1px 1px 0 #666; margin-top: 15px;">
+                            ✋ FLIP!
+                        </p>
+
+                        <p class="flip-hint" style="color: #999; margin-top: 10px;">
+                            ← Turn the page to reveal
+                        </p>
+                    </div>
+                </div>
+
             </div>
         </div>
 
