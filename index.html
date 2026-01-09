@@ -537,7 +537,7 @@
         .flip-card-container {
             position: relative;
             width: 100%;
-            min-height: 350px;
+            min-height: 450px;
             cursor: pointer;
             perspective: 1200px;
             overflow: visible;
@@ -546,7 +546,7 @@
         .flip-card-back-layer {
             position: relative;
             width: 100%;
-            min-height: 350px;
+            min-height: 450px;
             background: #fff;
             color: #000;
             border: 2px solid #000;
@@ -562,14 +562,14 @@
             top: 0;
             left: 0;
             width: 100%;
-            min-height: 350px;
+            min-height: 450px;
             background: #000;
             color: #fff;
-            border: 2px solid #000;
+            border: none;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 25px;
+            padding: 0;
             transform-origin: top left;
             transform-style: preserve-3d;
             transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -718,6 +718,27 @@
 
         .flip-card-front .flip-hint {
             color: #666;
+        }
+
+        /* Show OPEN hint by default */
+        .flip-hint-open {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Hide CLOSE hint by default */
+        .flip-hint-close {
+            opacity: 0;
+            transition: opacity 0.5s ease 0.8s;
+        }
+
+        /* When flipped: hide OPEN, show CLOSE */
+        .flip-card-container.flipped .flip-hint-open {
+            opacity: 0;
+        }
+
+        .flip-card-container.flipped .flip-hint-close {
+            opacity: 1;
         }
 
         .click-to-reveal {
@@ -988,14 +1009,17 @@
                             <div class="brand-type">Sportswear · Global</div>
                         </div>
                     </div>
-
-                    <p class="flip-hint" style="color: #666; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 0.9rem;">[ ✕ CLOSE ]</p>
                 </div>
 
                 <!-- Front Page (Flips away to reveal brands) -->
                 <div class="flip-card-page">
                     <img src="brands .png" alt="Client Roster" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;">
-                    <p class="flip-hint" style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); color: #fff; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 0.9rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); z-index: 10;">[ ▶ OPEN ]</p>
+                </div>
+
+                <!-- Hints at same position - toggle based on flip state -->
+                <div style="position: relative; text-align: center; padding: 10px 0; margin: 0; background: #fff; min-height: 35px;">
+                    <p class="flip-hint flip-hint-open" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); color: #666; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 0.9rem; margin: 0; pointer-events: none;">[ ▶ OPEN ]</p>
+                    <p class="flip-hint flip-hint-close" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); color: #666; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 0.9rem; margin: 0; pointer-events: none;">[ ✕ CLOSE ]</p>
                 </div>
 
             </div>
