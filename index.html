@@ -31,6 +31,7 @@
             align-items: center;
             padding: 40px;
             border-bottom: 2px solid #000;
+            background: #fff;
         }
 
         .intro-title {
@@ -40,6 +41,7 @@
             letter-spacing: 5px;
             position: relative;
             z-index: 10;
+            color: #000;
         }
 
         .intro-subtitle {
@@ -125,6 +127,7 @@
             font-family: 'Caveat', cursive;
             font-size: 1.8rem;
             font-weight: 700;
+            color: #000;
         }
 
         nav ul {
@@ -150,13 +153,15 @@
         .manga-page {
             max-width: 900px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 40px 20px 40px 80px;
+            overflow: visible;
         }
 
         .panel-row {
             display: flex;
             gap: 4px;
             margin-bottom: 4px;
+            overflow: visible;
         }
 
         .panel {
@@ -167,6 +172,7 @@
             flex-direction: column;
             justify-content: center;
             padding: 25px;
+            overflow: visible;
         }
 
         /* Speech Bubble */
@@ -217,6 +223,9 @@
             padding: 30px;
             border: 2px solid #000;
             margin-bottom: 4px;
+            background: #fff;
+            overflow: visible;
+            position: relative;
         }
 
         .chapter-number {
@@ -231,13 +240,15 @@
             font-size: 2rem;
             letter-spacing: 4px;
             text-transform: uppercase;
+            color: #000;
         }
 
         /* Photo Panel */
         .photo-panel {
             min-height: 400px;
             padding: 0;
-            overflow: hidden;
+            overflow: visible;
+            position: relative;
         }
 
         .photo-panel img {
@@ -245,6 +256,37 @@
             height: 100%;
             object-fit: cover;
             display: block;
+        }
+
+        /* Narration Text - manga style */
+        .narration-text {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #000;
+        }
+
+        .panel-dark .narration-text {
+            color: #fff;
+        }
+
+        /* Bubble coming from image - SVG based */
+        .bubble-from-image {
+            position: absolute;
+            top: -30px;
+            left: -60px;
+            width: 260px;
+            height: 130px;
+            z-index: 10;
+        }
+
+        .bubble-from-image .bubble-text {
+            position: relative;
+            padding: 18px 20px 35px 20px;
+            font-family: 'Caveat', cursive;
+            font-size: 1.15rem;
+            line-height: 1.4;
+            text-align: left;
+            z-index: 2;
         }
 
         /* Side panels */
@@ -409,6 +451,7 @@
             font-size: 0.9rem;
             letter-spacing: 2px;
             margin-bottom: 10px;
+            color: #000;
         }
 
         .footer-column a {
@@ -505,6 +548,14 @@
             nav { padding: 15px 20px; }
             nav ul { gap: 20px; }
             nav a { font-size: 0.8rem; }
+            .manga-page { padding: 40px 20px; }
+
+            .bubble-from-image {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin: 15px;
+            }
         }
     </style>
 </head>
@@ -604,22 +655,65 @@
             <h2 class="chapter-title">The One Behind the Search</h2>
         </div>
 
-        <!-- Photo + Intro Panels -->
-        <div class="panel-row">
+        <!-- Photo + Intro Panels - Asymmetric Layout -->
+        <div class="panel-row" style="position: relative;">
+            <!-- Photo Panel -->
             <div class="panel photo-panel" style="flex: 1.2;">
                 <img src="photo.jpg" alt="Vasil Andreev">
+                <!-- Bubble coming from image -->
+                <div class="bubble-from-image">
+                    <svg viewBox="0 0 260 130" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; top: 0; left: 0; width: 260px; height: 130px;">
+                        <path d="M25 8
+                                 Q10 9 6 18
+                                 Q3 28 5 45
+                                 Q4 65 6 78
+                                 Q8 92 22 96
+                                 Q45 98 80 97
+                                 Q120 96 175 97
+                                 L182 97
+                                 Q188 108 202 118
+                                 Q198 108 196 97
+                                 L210 96
+                                 Q235 97 248 93
+                                 Q257 88 256 72
+                                 Q258 50 255 30
+                                 Q253 12 238 9
+                                 Q210 7 170 8
+                                 Q120 7 70 8
+                                 Q45 7 25 8 Z"
+                              fill="#fff"
+                              stroke="#000"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"/>
+                    </svg>
+                    <div class="bubble-text">
+                        Hey, I'm Vasil. Welcome to my corner of the internet.
+                    </div>
+                </div>
             </div>
-            <div class="side-panels">
-                <div class="panel side-panel">
-                    <div class="bubble">
-                        Hey, I'm Vaseo — an SEO specialist helping brands get discovered online.
-                    </div>
-                </div>
-                <div class="panel side-panel panel-dark">
-                    <div class="bubble">
-                        I believe in strategy over shortcuts. Real results take time, but they last.
-                    </div>
-                </div>
+
+            <!-- Large text panel -->
+            <div class="panel" style="flex: 1; min-height: 350px;">
+                <p class="narration-text">
+                    I'm an SEO Consultant and Strategist who enjoys a good challenge. I believe that with a clear, well-structured strategy and the stubbornness to see it through, meaningful results can always be achieved.
+                </p>
+            </div>
+        </div>
+
+        <!-- Second row - asymmetric -->
+        <div class="panel-row">
+            <!-- Small accent panel -->
+            <div class="panel panel-dark" style="flex: 0.4; min-height: 120px; text-align: center; justify-content: center;">
+                <p style="font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 3px;">SEO</p>
+                <p style="font-size: 0.75rem; margin-top: 5px; color: #999;">Strategy & Growth</p>
+            </div>
+
+            <!-- Larger text panel -->
+            <div class="panel" style="flex: 1; min-height: 120px;">
+                <p class="narration-text">
+                    Vaseo exists to help brands get discovered and grow their organic visibility through SEO. I care more about building something that lasts than chasing short-term results.
+                </p>
             </div>
         </div>
 
@@ -640,7 +734,7 @@
         <div class="panel-row">
             <div class="panel" style="flex: 1;">
                 <div class="bubble bubble-no-tail" style="max-width: 100%;">
-                    I'm Vasil Andreev, a Senior SEO Executive with a proven track record of driving organic growth for global brands and local businesses alike.
+                    I've worked with both global brands and smaller local businesses. Although e-commerce is where most of my experience sits, it's not the only space I've worked in.
                 </div>
             </div>
         </div>
@@ -673,19 +767,18 @@
             </div>
         </div>
 
-        <!-- Row 4: Specialization + Tools -->
+        <!-- Row 4: Additional experience -->
         <div class="panel-row">
             <div class="panel" style="flex: 1;">
-                <div class="bubble bubble-no-tail" style="margin-bottom: 15px;">
-                    My expertise spans:
+                <div class="bubble bubble-no-tail" style="max-width: 100%;">
+                    I've also been involved in affiliate and iGaming projects, which taught me how to approach SEO in competitive and fast-moving environments.
                 </div>
-                <p style="font-size: 0.9rem; line-height: 1.8;">
-                    Technical SEO<br>
-                    Content Strategy<br>
-                    Data-Driven Insights
-                </p>
             </div>
-            <div class="panel" style="flex: 1.5;">
+        </div>
+
+        <!-- Row 5: Tools -->
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
                 <div class="bubble bubble-no-tail" style="margin-bottom: 15px;">
                     Tools I use daily:
                 </div>
@@ -696,20 +789,6 @@
                     <span class="tool-tag">Ahrefs</span>
                     <span class="tool-tag">Google Search Console</span>
                     <span class="tool-tag">Google Analytics</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Row 5: Currently learning -->
-        <div class="panel-row">
-            <div class="panel panel-dark" style="flex: 1;">
-                <div class="bubble">
-                    Currently expanding my skills in Python for SEO automation — streamlining processes and enhancing efficiency.
-                </div>
-            </div>
-            <div class="panel" style="flex: 1;">
-                <div class="bubble">
-                    I thrive on solving complex SEO challenges and delivering measurable results.
                 </div>
             </div>
         </div>
@@ -731,42 +810,51 @@
         <div class="panel-row">
             <div class="panel" style="flex: 1;">
                 <div class="bubble bubble-no-tail" style="max-width: 100%;">
-                    Every business is different. I offer tailored SEO solutions to help you rank higher and grow organically.
+                    Every business is different. I offer SEO services that focus on clarity, structure, and long-term organic growth.
                 </div>
             </div>
         </div>
 
-        <!-- Row 2: Services Grid -->
+        <!-- Row 2: Services 1-2 -->
         <div class="panel-row">
             <div class="panel" style="flex: 1;">
                 <p class="service-number">01</p>
-                <p class="service-title">SEO Audit</p>
-                <p class="service-desc">Comprehensive analysis of your website's health, identifying issues and opportunities for improvement.</p>
+                <p class="service-title">Audit</p>
+                <p class="service-desc">A full review of your website to understand how it performs in search. I look for technical issues, content gaps, and missed opportunities that limit visibility and growth.</p>
             </div>
             <div class="panel panel-dark" style="flex: 1;">
                 <p class="service-number">02</p>
-                <p class="service-title">Keyword Strategy</p>
-                <p class="service-desc">Research and targeting the right keywords your audience is searching for.</p>
+                <p class="service-title">Strategy & Roadmaps</p>
+                <p class="service-desc">A clear SEO plan built around your business goals. I define priorities, set direction, and create a roadmap that shows what to work on and why.</p>
             </div>
         </div>
 
-        <!-- Row 3: More Services -->
+        <!-- Row 3: Services 3-4 -->
         <div class="panel-row">
             <div class="panel panel-dark" style="flex: 1;">
                 <p class="service-number">03</p>
                 <p class="service-title">Technical SEO</p>
-                <p class="service-desc">Site speed, structure, indexing, and core web vitals optimization.</p>
+                <p class="service-desc">Work focused on how search engines access and understand your site. This includes structure, speed, indexing, and fixing issues that block performance.</p>
             </div>
             <div class="panel" style="flex: 1;">
                 <p class="service-number">04</p>
                 <p class="service-title">Content Strategy</p>
-                <p class="service-desc">Creating content that ranks, engages, and converts visitors into customers.</p>
+                <p class="service-desc">Planning and shaping content based on what people actually search for. The goal is to create pages that rank, answer questions, and support business outcomes.</p>
             </div>
         </div>
 
-        <!-- Row 4: CTA -->
+        <!-- Row 4: Service 5 -->
         <div class="panel-row">
-            <div class="panel" style="flex: 1; text-align: center;">
+            <div class="panel" style="flex: 1;">
+                <p class="service-number">05</p>
+                <p class="service-title">Visibility on LLMs</p>
+                <p class="service-desc">An overview of how your brand appears in large language models and AI-driven search tools. I assess whether and how your content is surfaced, referenced, or missed, and what can be improved to increase visibility.</p>
+            </div>
+        </div>
+
+        <!-- Row 5: CTA -->
+        <div class="panel-row">
+            <div class="panel panel-dark" style="flex: 1; text-align: center;">
                 <div class="bubble bubble-no-tail" style="margin: 0 auto;">
                     Need something specific? Let's discuss your project.
                 </div>
