@@ -1055,15 +1055,15 @@
         </svg>
 
         <!-- Main Title -->
-        <h1 class="intro-title">Vaseo</h1>
-        <p class="intro-subtitle">SEO Consultant & Strategist</p>
+        <p class="intro-title">Vaseo</p>
+        <h1 class="intro-subtitle">SEO Consultant & Strategist</h1>
         <p class="intro-description">
             Helping businesses grow through<br>
-            search engine optimization,<br>
+            search engine optimisation,<br>
             strategy & data-driven results.
         </p>
 
-        <p class="scroll-hint">↓ scroll down ↓</p>
+        <a href="#chapter-01" class="scroll-hint" style="text-decoration: none; color: inherit; cursor: pointer;">↓ scroll down ↓</a>
     </section>
 
     <!-- ==================== -->
@@ -1110,7 +1110,7 @@
                               stroke-linejoin="round"/>
                     </svg>
                     <div class="bubble-text">
-                        Hey, I'm Vasil. Welcome to my little project where I improve and showcase my skills to the world.
+                        Hey, I'm <a href="https://www.linkedin.com/in/vasil-andreev-b34142219/" target="_blank" style="color: #000; text-decoration: underline;">Vasil</a>. Welcome to my little project where I improve and showcase my skills to the world.
                     </div>
                 </div>
             </div>
@@ -1149,7 +1149,7 @@
         <!-- Chapter 02 Header -->
         <div class="chapter-header" id="chapter-02">
             <p class="chapter-number">Chapter 02</p>
-            <h2 class="chapter-title">The Experience</h2>
+            <h2 class="chapter-title">Experience</h2>
         </div>
 
         <!-- Row 1: Intro bubble -->
@@ -1271,7 +1271,7 @@
         <!-- Chapter 03 Header -->
         <div class="chapter-header" id="chapter-03">
             <p class="chapter-number">Chapter 03</p>
-            <h2 class="chapter-title">The Services</h2>
+            <h2 class="chapter-title">Services</h2>
         </div>
 
         <!-- Row 1: Intro -->
@@ -1339,7 +1339,7 @@
         <!-- Chapter 04 Header -->
         <div class="chapter-header" id="chapter-04">
             <p class="chapter-number">Chapter 04</p>
-            <h2 class="chapter-title">The Process</h2>
+            <h2 class="chapter-title">Process & Ways of Working</h2>
         </div>
 
         <!-- Row 1: Intro -->
@@ -1415,7 +1415,7 @@
                 </div>
                 <div style="margin-top: 30px; display: flex; gap: 20px; justify-content: center;">
                     <a href="mailto:hello@vaseo.xyz" style="color: #000; text-decoration: none; border-bottom: 1px solid #000; padding-bottom: 2px;">Email</a>
-                    <a href="https://linkedin.com" style="color: #000; text-decoration: none; border-bottom: 1px solid #000; padding-bottom: 2px;">LinkedIn</a>
+                    <a href="https://www.linkedin.com/in/vasil-andreev-b34142219/" target="_blank" style="color: #000; text-decoration: none; border-bottom: 1px solid #000; padding-bottom: 2px;">LinkedIn</a>
                 </div>
             </div>
         </div>
@@ -1454,14 +1454,14 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>© 2026 <a href="#">Vasil Andreev</a>. All rights reserved.</p>
+            <p>© 2026 <a href="https://www.linkedin.com/in/vasil-andreev-b34142219/" target="_blank">Vasil Andreev</a>. All rights reserved.</p>
             <a href="https://www.linkedin.com/in/vasil-andreev-b34142219/" class="footer-cta">FOLLOW ON LINKEDIN</a>
         </div>
     </footer>
 
     <script>
-        // Smooth scrolling for nav links
-        document.querySelectorAll('nav a').forEach(anchor => {
+        // Smooth scrolling for nav links and scroll hint
+        document.querySelectorAll('nav a, .scroll-hint').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
