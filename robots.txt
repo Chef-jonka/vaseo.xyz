@@ -1,0 +1,6 @@
+# robots.txt for vaseo.xyz
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://vaseo.xyz/sitemap.xml
