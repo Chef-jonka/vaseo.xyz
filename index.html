@@ -749,7 +749,7 @@
             min-height: 450px;
             background: #fff;
             color: #000;
-            border: 2px solid #000;
+            border: none;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -1177,16 +1177,19 @@
             </div>
         </div>
 
-        <!-- Row 3: Brands worked with - Flip Card -->
+        <!-- Row 3: Brands header -->
+        <div class="panel-row">
+            <div class="panel panel-dark" style="flex: 1; text-align: center; padding: 15px 25px;">
+                <p style="font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 3px; margin: 0;">BRANDS I'VE WORKED WITH</p>
+            </div>
+        </div>
+
+        <!-- Row 4: Brands Flip Card -->
         <div class="panel-row">
             <div class="panel flip-card-container" style="flex: 1; padding: 0; overflow: visible; position: relative;" onclick="this.classList.toggle('flipped')">
 
                 <!-- Back Layer (Always visible, shows brands) -->
                 <div class="flip-card-back-layer">
-                    <p style="font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 2px; margin-bottom: 15px; text-align: center;">
-                        BRANDS I'VE WORKED WITH
-                    </p>
-
                     <div class="brands-grid">
                         <div class="brand-card">
                             <div class="brand-name">Disney</div>
