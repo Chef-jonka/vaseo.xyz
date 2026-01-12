@@ -106,7 +106,8 @@
             align-items: center;
             padding: 40px;
             border-bottom: 2px solid #000;
-            background: #fff;
+            background: url('Jonki work .jpeg') center center / cover no-repeat;
+            background-color: #fff;
         }
 
         .intro-title {
@@ -149,37 +150,11 @@
             50% { transform: translateY(10px); }
         }
 
-        /* Doodles */
-        .doodle {
-            position: absolute;
-            stroke: #000;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .doodle-search { top: 15%; left: 10%; width: 80px; height: 80px; }
-        .doodle-graph { top: 20%; right: 12%; width: 100px; height: 80px; }
-        .doodle-rocket { bottom: 25%; left: 8%; width: 70px; height: 100px; }
-        .doodle-screen { top: 60%; right: 10%; width: 90px; height: 70px; }
-        .doodle-star { width: 30px; height: 30px; }
-        .star-1 { top: 10%; left: 30%; }
-        .star-2 { top: 35%; right: 25%; }
-        .star-3 { bottom: 20%; left: 25%; }
-        .doodle-bulb { top: 40%; left: 18%; width: 50px; height: 70px; }
-        .doodle-squiggle { width: 100px; height: 30px; }
-        .squiggle-1 { top: 25%; left: 25%; }
-
+        /* Doodles - hidden when using background image */
+        .doodle,
         .doodle-label {
-            font-family: 'Caveat', cursive;
-            font-size: 0.9rem;
-            position: absolute;
-            color: #666;
+            display: none;
         }
-
-        .label-seo { top: 28%; left: 8%; }
-        .label-growth { top: 32%; right: 10%; }
-        .label-ideas { top: 52%; left: 12%; }
-        .label-results { top: 72%; right: 8%; }
 
         /* ======================== */
         /* NAVIGATION               */
