@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | Vaseo</title>
+    <meta name="description" content="Oops! This page doesn't exist. Let's get you back on track.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <meta name="theme-color" content="#000000">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Noto+Sans+JP:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #fff;
+            font-family: 'Noto Sans JP', sans-serif;
+            color: #000;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 2px solid #000;
+        }
+
+        .logo {
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #000;
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        nav a {
+            color: #000;
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .lang-switcher {
+            display: flex;
+            gap: 10px;
+            margin-left: 30px;
+        }
+
+        .lang-switcher a {
+            padding: 4px 10px;
+            border: 1px solid #000;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .lang-switcher a.active {
+            background: #000;
+            color: #fff;
+        }
+
+        /* Main 404 Section */
+        .error-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 120px 40px 60px;
+            position: relative;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        /* Manga Speed Lines Background */
+        .speed-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .speed-lines::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200%;
+            height: 200%;
+            transform: translate(-50%, -50%);
+            background: repeating-conic-gradient(
+                from 0deg,
+                transparent 0deg 3deg,
+                rgba(0,0,0,0.03) 3deg 6deg
+            );
+            animation: rotate-lines 60s linear infinite;
+        }
+
+        @keyframes rotate-lines {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Action Lines */
+        .action-lines {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            pointer-events: none;
+        }
+
+        .action-line {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(0,0,0,0.4) 0%, transparent 100%);
+            transform-origin: left center;
+        }
+
+        .action-line:nth-child(1) { transform: rotate(0deg); }
+        .action-line:nth-child(2) { transform: rotate(30deg); }
+        .action-line:nth-child(3) { transform: rotate(60deg); }
+        .action-line:nth-child(4) { transform: rotate(90deg); }
+        .action-line:nth-child(5) { transform: rotate(120deg); }
+        .action-line:nth-child(6) { transform: rotate(150deg); }
+        .action-line:nth-child(7) { transform: rotate(180deg); }
+        .action-line:nth-child(8) { transform: rotate(210deg); }
+        .action-line:nth-child(9) { transform: rotate(240deg); }
+        .action-line:nth-child(10) { transform: rotate(270deg); }
+        .action-line:nth-child(11) { transform: rotate(300deg); }
+        .action-line:nth-child(12) { transform: rotate(330deg); }
+
+        /* Main Panel */
+        .error-panel {
+            position: relative;
+            z-index: 10;
+            background: #fff;
+            border: 4px solid #000;
+            padding: 60px 80px;
+            text-align: center;
+            max-width: 600px;
+            box-shadow: 8px 8px 0 #000;
+            transform: rotate(-1deg);
+        }
+
+        /* Dramatic 404 Number */
+        .error-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 12rem;
+            line-height: 0.9;
+            letter-spacing: -5px;
+            color: #000;
+            position: relative;
+            display: inline-block;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            20% { transform: translateX(-10px) rotate(-2deg); }
+            40% { transform: translateX(10px) rotate(2deg); }
+            60% { transform: translateX(-5px) rotate(-1deg); }
+            80% { transform: translateX(5px) rotate(1deg); }
+        }
+
+        /* Impact Effect Behind Number */
+        .error-number::before {
+            content: '404';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            color: transparent;
+            -webkit-text-stroke: 2px rgba(0,0,0,0.2);
+            z-index: -1;
+        }
+
+        /* Speech Bubble */
+        .speech-bubble {
+            position: absolute;
+            top: -40px;
+            right: -60px;
+            background: #000;
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-family: 'Caveat', cursive;
+            font-size: 1.3rem;
+            transform: rotate(8deg);
+            white-space: nowrap;
+            animation: bounce-bubble 2s ease-in-out infinite;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 30px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 15px solid #000;
+            transform: rotate(-20deg);
+        }
+
+        @keyframes bounce-bubble {
+            0%, 100% { transform: rotate(8deg) translateY(0); }
+            50% { transform: rotate(8deg) translateY(-5px); }
+        }
+
+        /* Exclamation Marks */
+        .exclamation {
+            position: absolute;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            color: #e63946;
+            animation: pop 0.5s ease-out forwards;
+        }
+
+        .exclamation:nth-child(1) { top: 20px; left: 20px; animation-delay: 0.1s; }
+        .exclamation:nth-child(2) { top: 30px; right: 30px; animation-delay: 0.2s; }
+        .exclamation:nth-child(3) { bottom: 80px; left: 30px; animation-delay: 0.3s; }
+
+        @keyframes pop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Error Message */
+        .error-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 4px;
+            margin-top: 20px;
+            text-transform: uppercase;
+        }
+
+        .error-message {
+            font-family: 'Caveat', cursive;
+            font-size: 1.4rem;
+            color: #555;
+            margin-top: 15px;
+            line-height: 1.4;
+        }
+
+        /* CTA Button */
+        .back-home {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: #000;
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            border: 3px solid #000;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .back-home:hover {
+            background: #fff;
+            color: #000;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 0 #000;
+        }
+
+        .back-home::before {
+            content: '→ ';
+        }
+
+        /* Manga Sound Effect */
+        .sound-effect {
+            position: absolute;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: #e63946;
+            letter-spacing: 2px;
+            transform: rotate(-15deg);
+            bottom: -30px;
+            right: -40px;
+            text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff;
+        }
+
+        /* Small Decorative Elements */
+        .sweat-drop {
+            position: absolute;
+            width: 15px;
+            height: 25px;
+            background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.1) 100%);
+            border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
+            top: 60px;
+            left: 50px;
+            animation: drip 1.5s ease-in-out infinite;
+        }
+
+        @keyframes drip {
+            0%, 100% { transform: translateY(0); opacity: 1; }
+            50% { transform: translateY(10px); opacity: 0.5; }
+        }
+
+        /* Stars */
+        .star {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            stroke: #000;
+            stroke-width: 2;
+            fill: none;
+            animation: twinkle 1s ease-in-out infinite;
+        }
+
+        .star:nth-child(1) { top: 100px; left: 15%; animation-delay: 0s; }
+        .star:nth-child(2) { top: 150px; right: 20%; animation-delay: 0.3s; }
+        .star:nth-child(3) { bottom: 200px; left: 25%; animation-delay: 0.6s; }
+        .star:nth-child(4) { bottom: 150px; right: 15%; animation-delay: 0.9s; }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav { padding: 15px 20px; }
+            nav ul { gap: 15px; }
+            nav a { font-size: 0.75rem; }
+
+            .error-panel {
+                padding: 40px 30px;
+                margin: 0 20px;
+            }
+
+            .error-number {
+                font-size: 8rem;
+            }
+
+            .speech-bubble {
+                top: -50px;
+                right: -20px;
+                font-size: 1rem;
+            }
+
+            .error-title {
+                font-size: 1.5rem;
+            }
+
+            .sound-effect {
+                font-size: 1.8rem;
+                right: -20px;
+            }
+
+            .lang-switcher {
+                margin-left: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="/" class="logo">Vaseo</a>
+        <ul>
+            <li><a href="/#chapter-01">About</a></li>
+            <li><a href="/#chapter-02">Experience</a></li>
+            <li><a href="/#chapter-03">Services</a></li>
+            <li><a href="/#chapter-04">Process</a></li>
+            <li><a href="/#contact">Contact</a></li>
+        </ul>
+        <div class="lang-switcher">
+            <a href="/" class="active">EN</a>
+            <a href="/BG-bg/">BG</a>
+        </div>
+    </nav>
+
+    <!-- 404 Content -->
+    <section class="error-page">
+
+        <!-- Background Speed Lines -->
+        <div class="speed-lines"></div>
+
+        <!-- Action Lines Radiating Out -->
+        <div class="action-lines">
+            <div class="action-line"></div>
+            <div class="action-line"></div>
+            <div class="action-line"></div>
+            <div class="action-line"></div>
+            <div class="action-line"></div>
+            <div class="action-line"></div>
+            <div class="action-line"></div>
+            <div class="action-line"></div>
+            <div class="action-line"></div>
+            <div class="action-line"></div>
+            <div class="action-line"></div>
+            <div class="action-line"></div>
+        </div>
+
+        <!-- Decorative Stars -->
+        <svg class="star" viewBox="0 0 30 30">
+            <path d="M15,5 L17,12 L25,12 L19,17 L21,25 L15,20 L9,25 L11,17 L5,12 L13,12 Z"/>
+        </svg>
+        <svg class="star" viewBox="0 0 30 30">
+            <path d="M15,5 L17,12 L25,12 L19,17 L21,25 L15,20 L9,25 L11,17 L5,12 L13,12 Z"/>
+        </svg>
+        <svg class="star" viewBox="0 0 30 30">
+            <path d="M15,5 L17,12 L25,12 L19,17 L21,25 L15,20 L9,25 L11,17 L5,12 L13,12 Z"/>
+        </svg>
+        <svg class="star" viewBox="0 0 30 30">
+            <path d="M15,5 L17,12 L25,12 L19,17 L21,25 L15,20 L9,25 L11,17 L5,12 L13,12 Z"/>
+        </svg>
+
+        <!-- Main Error Panel -->
+        <div class="error-panel">
+
+            <!-- Exclamation Marks -->
+            <span class="exclamation">!</span>
+            <span class="exclamation">!</span>
+            <span class="exclamation">?!</span>
+
+            <!-- Sweat Drop -->
+            <div class="sweat-drop"></div>
+
+            <!-- Speech Bubble -->
+            <div class="speech-bubble">NANI?!</div>
+
+            <!-- 404 Number -->
+            <div class="error-number">404</div>
+
+            <!-- Error Message -->
+            <h1 class="error-title">Page Not Found</h1>
+            <p class="error-message">
+                This page has vanished into the void...<br>
+                Like rankings without SEO!
+            </p>
+
+            <!-- Back Home Button -->
+            <a href="/" class="back-home">RETURN HOME</a>
+
+            <!-- Sound Effect -->
+            <span class="sound-effect">WHOOSH!</span>
+
+        </div>
+
+    </section>
+
+</body>
+</html>
