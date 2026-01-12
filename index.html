@@ -786,13 +786,14 @@
         /* Peeled state */
         .flip-card-container.flipped .flip-card-page {
             transform:
-                translateX(-15%)
-                translateY(-20%)
+                translateX(-40%)
+                translateY(-25%)
                 rotateX(25deg)
-                rotateY(-10deg)
-                rotateZ(-8deg)
-                scale(0.85);
+                rotateY(-12deg)
+                rotateZ(-10deg)
+                scale(0.65);
             clip-path: polygon(0 0, 100% 0, 85% 85%, 0 100%);
+            opacity: 0.95;
         }
 
         /* Page curl corner indicator */
@@ -1193,7 +1194,7 @@
                     <div class="brands-grid">
                         <div class="brand-card">
                             <div class="brand-name">Disney</div>
-                            <div class="brand-type">E-commerce · Global</div>
+                            <div class="brand-type">Entertainment · Global</div>
                         </div>
                         <div class="brand-card">
                             <div class="brand-name">Wella</div>
@@ -1417,7 +1418,7 @@
                     Ready to improve your search rankings? Let's talk.
                 </div>
                 <div style="margin-top: 30px; display: flex; gap: 20px; justify-content: center;">
-                    <a href="mailto:hello@vaseo.xyz" style="color: #000; text-decoration: none; border-bottom: 1px solid #000; padding-bottom: 2px;">Email</a>
+                    <a href="mailto:vasilandreev199@gmail.com" style="color: #000; text-decoration: none; border-bottom: 1px solid #000; padding-bottom: 2px;">Email</a>
                     <a href="https://www.linkedin.com/in/vasil-andreev-b34142219/" target="_blank" style="color: #000; text-decoration: none; border-bottom: 1px solid #000; padding-bottom: 2px;">LinkedIn</a>
                 </div>
             </div>
@@ -1488,6 +1489,24 @@
                     });
                 }
             });
+        });
+
+        // Auto-rotate stats panels when scrolled into view
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.dataset.animated) {
+                    entry.target.dataset.animated = 'true';
+                    entry.target.classList.add('rotating');
+                    entry.target.addEventListener('animationend', function handler() {
+                        this.classList.remove('rotating');
+                        this.removeEventListener('animationend', handler);
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stats-panel').forEach(panel => {
+            statsObserver.observe(panel);
         });
     </script>
 
