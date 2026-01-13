@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | Vaseo - SEO Insights & Strategies</title>
+    <meta name="description" content="SEO insights, strategies, and tips from Vaseo. Learn about search engine optimisation, technical SEO, and growing your organic visibility.">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Vasil Andreev">
+    <link rel="canonical" href="https://vaseo.xyz/blog/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://vaseo.xyz/blog/">
+    <meta property="og:title" content="Blog | Vaseo - SEO Insights & Strategies">
+    <meta property="og:description" content="SEO insights, strategies, and tips from Vaseo. Learn about search engine optimisation, technical SEO, and growing your organic visibility.">
+    <meta property="og:image" content="https://vaseo.xyz/photo.jpg">
+    <meta property="og:locale" content="en_GB">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Blog | Vaseo - SEO Insights & Strategies">
+    <meta name="twitter:description" content="SEO insights, strategies, and tips from Vaseo.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <meta name="theme-color" content="#000000">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Noto+Sans+JP:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #fff;
+            font-family: 'Noto Sans JP', sans-serif;
+            color: #000;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 2px solid #000;
+        }
+
+        .logo {
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #000;
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        nav a {
+            color: #000;
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .lang-switcher {
+            display: flex;
+            gap: 10px;
+            margin-left: 30px;
+        }
+
+        .lang-switcher a {
+            padding: 4px 10px;
+            border: 1px solid #000;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .lang-switcher a.active {
+            background: #000;
+            color: #fff;
+        }
+
+        /* Blog Header */
+        .blog-header {
+            padding: 140px 40px 60px;
+            text-align: center;
+            border-bottom: 2px solid #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blog-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(0,0,0,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0,0,0,0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .blog-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 5rem;
+            letter-spacing: 8px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .blog-title::after {
+            content: 'BLOG';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(0,0,0,0.1);
+            z-index: -1;
+        }
+
+        .blog-subtitle {
+            font-family: 'Caveat', cursive;
+            font-size: 1.5rem;
+            color: #555;
+            margin-top: 15px;
+        }
+
+        /* Chapter Marker */
+        .chapter-marker {
+            font-family: 'Caveat', cursive;
+            font-size: 1rem;
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        /* Blog Content */
+        .blog-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        /* Blog Grid - Manga Panel Style */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* Blog Card - Manga Panel */
+        .blog-card {
+            border: 3px solid #000;
+            background: #fff;
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 5px 5px 0 #000;
+        }
+
+        .blog-card-image {
+            width: 100%;
+            height: 200px;
+            background: #f5f5f5;
+            border-bottom: 3px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .blog-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .blog-card-image .placeholder-icon {
+            font-size: 4rem;
+            opacity: 0.2;
+        }
+
+        .blog-card-content {
+            padding: 20px;
+        }
+
+        .blog-card-category {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: #fff;
+            background: #000;
+            padding: 4px 10px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .blog-card-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .blog-card-excerpt {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .blog-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #999;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .blog-card-date {
+            font-family: 'Caveat', cursive;
+            font-size: 0.9rem;
+        }
+
+        .blog-card-read {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1px;
+            color: #000;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .blog-card-read::after {
+            content: ' →';
+        }
+
+        .blog-card-read:hover {
+            text-decoration: underline;
+        }
+
+        /* Coming Soon Panel */
+        .coming-soon-panel {
+            grid-column: 1 / -1;
+            border: 3px dashed #ccc;
+            background: #fafafa;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .coming-soon-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 4px;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .coming-soon-text {
+            font-family: 'Caveat', cursive;
+            font-size: 1.3rem;
+            color: #999;
+        }
+
+        /* Speed Lines Decoration */
+        .speed-lines-small {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .blog-card:hover .speed-lines-small {
+            opacity: 1;
+        }
+
+        .speed-lines-small::before,
+        .speed-lines-small::after {
+            content: '';
+            position: absolute;
+            background: #000;
+        }
+
+        .speed-lines-small::before {
+            width: 20px;
+            height: 2px;
+            top: 10px;
+            right: 0;
+        }
+
+        .speed-lines-small::after {
+            width: 15px;
+            height: 2px;
+            top: 18px;
+            right: 5px;
+        }
+
+        /* Featured Post - Large Panel */
+        .blog-card.featured {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-width: 4px;
+        }
+
+        .blog-card.featured .blog-card-image {
+            height: 100%;
+            min-height: 300px;
+            border-bottom: none;
+            border-right: 4px solid #000;
+        }
+
+        .blog-card.featured .blog-card-content {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .blog-card.featured .blog-card-title {
+            font-size: 2rem;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: -2px;
+            left: 20px;
+            background: #e63946;
+            color: #fff;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            padding: 8px 15px;
+            z-index: 10;
+        }
+
+        /* Footer */
+        footer {
+            background: #f5f5f5;
+            border-top: 2px solid #000;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .footer-text {
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .footer-text a {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav { padding: 15px 20px; }
+            nav ul { gap: 15px; }
+            nav a { font-size: 0.75rem; }
+
+            .blog-header { padding: 120px 20px 40px; }
+            .blog-title { font-size: 3rem; }
+
+            .blog-content { padding: 40px 20px; }
+
+            .blog-card.featured {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-card.featured .blog-card-image {
+                border-right: none;
+                border-bottom: 4px solid #000;
+                min-height: 200px;
+            }
+
+            .lang-switcher {
+                margin-left: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="/" class="logo">Vaseo</a>
+        <ul>
+            <li><a href="/#chapter-01">About</a></li>
+            <li><a href="/#chapter-02">Experience</a></li>
+            <li><a href="/#chapter-03">Services</a></li>
+            <li><a href="/#chapter-04">Process</a></li>
+            <li><a href="/#contact">Contact</a></li>
+            <li><a href="/blog" style="text-decoration: underline;">Blog</a></li>
+        </ul>
+        <div class="lang-switcher">
+            <a href="/" class="active">EN</a>
+            <a href="/BG-bg/">BG</a>
+        </div>
+    </nav>
+
+    <!-- Blog Header -->
+    <header class="blog-header">
+        <p class="chapter-marker">Chapter 05</p>
+        <h1 class="blog-title">BLOG</h1>
+        <p class="blog-subtitle">SEO insights, strategies & thoughts</p>
+    </header>
+
+    <!-- Blog Content -->
+    <main class="blog-content">
+        <div class="blog-grid">
+
+            <!-- Coming Soon Panel -->
+            <div class="coming-soon-panel">
+                <h2 class="coming-soon-title">COMING SOON</h2>
+                <p class="coming-soon-text">
+                    New articles are on the way...<br>
+                    Stay tuned for SEO insights and strategies!
+                </p>
+            </div>
+
+            <!-- Example Blog Cards (commented out for when you add posts)
+
+            <article class="blog-card featured">
+                <span class="featured-badge">FEATURED</span>
+                <div class="blog-card-image">
+                    <img src="/blog/images/post-1.jpg" alt="Post title">
+                </div>
+                <div class="blog-card-content">
+                    <span class="blog-card-category">TECHNICAL SEO</span>
+                    <h2 class="blog-card-title">How to Audit Your Website for Technical SEO Issues</h2>
+                    <p class="blog-card-excerpt">A comprehensive guide to identifying and fixing technical SEO problems that could be holding back your rankings...</p>
+                    <div class="blog-card-meta">
+                        <span class="blog-card-date">January 2026</span>
+                        <a href="/blog/technical-seo-audit" class="blog-card-read">READ</a>
+                    </div>
+                </div>
+                <div class="speed-lines-small"></div>
+            </article>
+
+            <article class="blog-card">
+                <div class="blog-card-image">
+                    <span class="placeholder-icon">📊</span>
+                </div>
+                <div class="blog-card-content">
+                    <span class="blog-card-category">STRATEGY</span>
+                    <h2 class="blog-card-title">Building an SEO Roadmap That Actually Works</h2>
+                    <p class="blog-card-excerpt">Learn how to create a strategic SEO plan that delivers results...</p>
+                    <div class="blog-card-meta">
+                        <span class="blog-card-date">January 2026</span>
+                        <a href="/blog/seo-roadmap" class="blog-card-read">READ</a>
+                    </div>
+                </div>
+                <div class="speed-lines-small"></div>
+            </article>
+
+            -->
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-text">© 2026 <a href="https://www.linkedin.com/in/vasil-andreev-b34142219/" target="_blank">Vasil Andreev</a>. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
