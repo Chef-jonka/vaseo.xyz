@@ -961,27 +961,276 @@
             height: 60px;
         }
 
+        /* Mobile Menu Button */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: #000;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
-            .intro-title { font-size: 4rem; }
-            .panel-row { flex-direction: column; }
-            .photo-panel { min-height: 300px; }
-            .doodle { transform: scale(0.7); }
-            .big-number { font-size: 3rem; }
-            nav { padding: 15px 20px; }
-            nav ul { gap: 20px; }
-            nav a { font-size: 0.8rem; }
-            .manga-page { padding: 40px 20px; }
+            /* Navigation Mobile */
+            nav {
+                padding: 15px 20px;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            nav ul {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: #fff;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 30px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+
+            nav ul.active {
+                transform: translateX(0);
+            }
+
+            nav ul li a {
+                font-size: 1.5rem;
+                font-family: 'Bebas Neue', sans-serif;
+                letter-spacing: 3px;
+            }
+
+            .lang-switcher {
+                position: fixed;
+                bottom: 40px;
+                left: 50%;
+                transform: translateX(-50%);
+                margin: 0;
+                z-index: 1000;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+            }
+
+            .lang-switcher.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            /* Intro Section */
+            .intro {
+                padding: 20px;
+                min-height: 100vh;
+            }
+
+            .intro-title {
+                font-size: 3.5rem;
+            }
+
+            .intro-subtitle {
+                font-size: 1.4rem;
+            }
+
+            .intro-description {
+                font-size: 1.1rem;
+                max-width: 300px;
+            }
+
+            .scroll-hint {
+                font-size: 1rem;
+                bottom: 20px;
+            }
+
+            /* Manga Page */
+            .manga-page {
+                padding: 20px 15px 40px 15px;
+            }
+
+            .panel-row {
+                flex-direction: column;
+            }
+
+            .panel {
+                padding: 20px;
+            }
+
+            .photo-panel {
+                min-height: 280px;
+            }
 
             .bubble-from-image {
                 position: relative;
                 top: auto;
                 left: auto;
                 margin: 15px;
+                width: 100%;
+                max-width: 260px;
             }
 
-            .lang-switcher {
-                margin-left: 15px;
+            /* Chapter Headers */
+            .chapter-header {
+                padding: 20px;
+            }
+
+            .chapter-title {
+                font-size: 1.5rem;
+                letter-spacing: 2px;
+            }
+
+            /* Stats */
+            .big-number {
+                font-size: 2.5rem;
+            }
+
+            .big-label {
+                font-size: 0.75rem;
+            }
+
+            /* Services */
+            .service-number {
+                font-size: 2rem;
+            }
+
+            .service-title {
+                font-size: 1.2rem;
+            }
+
+            .service-desc {
+                font-size: 0.8rem;
+            }
+
+            /* Steps */
+            .step-title {
+                font-size: 1.1rem;
+            }
+
+            .step-desc {
+                font-size: 0.8rem;
+            }
+
+            /* Tools Banner */
+            .tools-banner {
+                padding: 40px 15px;
+            }
+
+            .tools-banner > p {
+                font-size: 1.2rem !important;
+                margin-bottom: 30px !important;
+            }
+
+            .tools-grid {
+                gap: 20px;
+            }
+
+            .tool-tag {
+                font-size: 0.8rem;
+                padding: 10px 15px;
+            }
+
+            /* Flip Card */
+            .flip-card-container {
+                min-height: 350px;
+            }
+
+            .flip-card-back-layer {
+                min-height: 350px;
+            }
+
+            .flip-card-page {
+                min-height: 350px;
+            }
+
+            .brands-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .brand-card {
+                padding: 12px;
+            }
+
+            .brand-name {
+                font-size: 1.1rem;
+            }
+
+            /* Bubbles */
+            .bubble {
+                font-size: 0.85rem;
+                padding: 12px 15px;
+            }
+
+            .narration-text {
+                font-size: 0.85rem;
+            }
+
+            /* Footer */
+            footer {
+                padding: 40px 20px 20px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .footer-cta {
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Section Spacer */
+            .section-spacer {
+                height: 40px;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 400px) {
+            .intro-title {
+                font-size: 2.8rem;
+            }
+
+            .chapter-title {
+                font-size: 1.3rem;
+            }
+
+            .big-number {
+                font-size: 2rem;
             }
         }
     </style>
@@ -992,7 +1241,7 @@
     <!-- NAVIGATION           -->
     <!-- ==================== -->
     <nav>
-        <div class="logo">Vaseo</div>
+        <a href="/BG-bg/" class="logo">Vaseo</a>
         <ul>
             <li><a href="#chapter-01">За мен</a></li>
             <li><a href="#chapter-02">Опит</a></li>
@@ -1004,6 +1253,11 @@
         <div class="lang-switcher">
             <a href="/">EN</a>
             <a href="/BG-bg/" class="active">BG</a>
+        </div>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </nav>
 
@@ -1473,6 +1727,36 @@
     </footer>
 
     <script>
+        // Mobile menu toggle
+        function toggleMenu() {
+            const menu = document.querySelector('nav ul');
+            const menuToggle = document.querySelector('.menu-toggle');
+            const langSwitcher = document.querySelector('.lang-switcher');
+
+            menu.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+            langSwitcher.classList.toggle('active');
+
+            // Prevent body scroll when menu is open
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', () => {
+                const menu = document.querySelector('nav ul');
+                const menuToggle = document.querySelector('.menu-toggle');
+                const langSwitcher = document.querySelector('.lang-switcher');
+
+                if (menu.classList.contains('active')) {
+                    menu.classList.remove('active');
+                    menuToggle.classList.remove('active');
+                    langSwitcher.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
         // Smooth scrolling for nav links and scroll hint
         document.querySelectorAll('nav a:not(.lang-switcher a), .scroll-hint').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
