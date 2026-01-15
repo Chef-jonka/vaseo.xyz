@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TEMPLATE: Update title for each tool -->
+    <title>Tool Name | Vaseo - Free SEO Tools</title>
+    <meta name="description" content="TEMPLATE: Add tool description here. Explain what the tool does and how it helps with SEO.">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Vasil Andreev">
+    <!-- TEMPLATE: Update canonical URL -->
+    <link rel="canonical" href="https://vaseo.xyz/tools/tool-name/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://vaseo.xyz/tools/tool-name/">
+    <meta property="og:title" content="Tool Name | Vaseo - Free SEO Tools">
+    <meta property="og:description" content="TEMPLATE: Add tool description here.">
+    <meta property="og:image" content="https://vaseo.xyz/photo.jpg">
+    <meta property="og:locale" content="en_GB">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Tool Name | Vaseo - Free SEO Tools">
+    <meta name="twitter:description" content="TEMPLATE: Add tool description here.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <meta name="theme-color" content="#000000">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Noto+Sans+JP:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #fff;
+            font-family: 'Noto Sans JP', sans-serif;
+            color: #000;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 2px solid #000;
+        }
+
+        .logo {
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #000;
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        nav a {
+            color: #000;
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .lang-switcher {
+            display: flex;
+            gap: 10px;
+            margin-left: 30px;
+        }
+
+        .lang-switcher a {
+            padding: 4px 10px;
+            border: 1px solid #000;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .lang-switcher a.active {
+            background: #000;
+            color: #fff;
+        }
+
+        /* Mobile Menu */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: #000;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* Tool Header */
+        .tool-header {
+            padding: 140px 40px 60px;
+            text-align: center;
+            border-bottom: 2px solid #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(0,0,0,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0,0,0,0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .chapter-marker {
+            font-family: 'Caveat', cursive;
+            font-size: 1rem;
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        .tool-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4rem;
+            letter-spacing: 6px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .tool-subtitle {
+            font-family: 'Caveat', cursive;
+            font-size: 1.5rem;
+            color: #555;
+            margin-top: 15px;
+        }
+
+        .tool-category-badge {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: #fff;
+            background: #000;
+            padding: 6px 15px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            font-size: 0.85rem;
+        }
+
+        .breadcrumb a {
+            color: #666;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: #999;
+            margin: 0 10px;
+        }
+
+        .breadcrumb .current {
+            color: #000;
+        }
+
+        /* Tool Content */
+        .tool-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 40px 60px;
+        }
+
+        /* Tool Panel - Main Interface */
+        .tool-panel {
+            border: 3px solid #000;
+            background: #fff;
+            margin-bottom: 30px;
+        }
+
+        .tool-panel-header {
+            background: #000;
+            color: #fff;
+            padding: 15px 25px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tool-panel-body {
+            padding: 30px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            color: #000;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 1rem;
+            border: 2px solid #000;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            box-shadow: 4px 4px 0 #000;
+        }
+
+        .form-input::placeholder {
+            color: #999;
+        }
+
+        textarea.form-input {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        /* Button */
+        .btn {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            padding: 15px 40px;
+            border: 3px solid #000;
+            background: #000;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: #fff;
+            color: #000;
+            box-shadow: 4px 4px 0 #000;
+        }
+
+        .btn-secondary {
+            background: #fff;
+            color: #000;
+        }
+
+        .btn-secondary:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        /* Results Panel */
+        .results-panel {
+            border: 3px solid #000;
+            background: #f9f9f9;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .results-panel.active {
+            display: block;
+        }
+
+        .results-header {
+            background: #000;
+            color: #fff;
+            padding: 15px 25px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        .results-body {
+            padding: 30px;
+        }
+
+        .result-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .result-value.good {
+            color: #2d6a4f;
+        }
+
+        .result-value.warning {
+            color: #e9c46a;
+        }
+
+        .result-value.bad {
+            color: #e63946;
+        }
+
+        /* Info Section */
+        .info-section {
+            margin-top: 50px;
+            padding: 30px;
+            border: 2px solid #000;
+            background: #fff;
+        }
+
+        .info-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .info-text {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .info-text p {
+            margin-bottom: 15px;
+        }
+
+        .info-text ul {
+            margin: 15px 0 15px 25px;
+        }
+
+        .info-text li {
+            margin-bottom: 8px;
+        }
+
+        /* Related Tools */
+        .related-tools {
+            margin-top: 50px;
+        }
+
+        .related-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .related-card {
+            border: 2px solid #000;
+            padding: 20px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .related-card:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .related-card-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .related-card-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            background: #f5f5f5;
+            border-top: 2px solid #000;
+            padding: 40px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer-text {
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .footer-text a {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            nav ul {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: #fff;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 30px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+
+            nav ul.active {
+                transform: translateX(0);
+            }
+
+            nav ul li a {
+                font-size: 1.5rem;
+                font-family: 'Bebas Neue', sans-serif;
+                letter-spacing: 3px;
+            }
+
+            .lang-switcher {
+                position: fixed;
+                bottom: 40px;
+                left: 50%;
+                transform: translateX(-50%);
+                margin: 0;
+                z-index: 1000;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+            }
+
+            .lang-switcher.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .tool-header {
+                padding: 120px 20px 40px;
+            }
+
+            .tool-title {
+                font-size: 2.5rem;
+            }
+
+            .tool-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .breadcrumb {
+                padding: 15px 20px;
+            }
+
+            .tool-content {
+                padding: 20px 20px 40px;
+            }
+
+            .tool-panel-body {
+                padding: 20px;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .related-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .tool-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="/" class="logo">Vaseo</a>
+        <ul>
+            <li><a href="/#chapter-01">About</a></li>
+            <li><a href="/#chapter-02">Experience</a></li>
+            <li><a href="/#chapter-03">Services</a></li>
+            <li><a href="/#chapter-04">Process</a></li>
+            <li><a href="/#contact">Contact</a></li>
+            <li><a href="/blog/">Blog</a></li>
+            <li><a href="/tools/" style="text-decoration: underline;">Tools</a></li>
+        </ul>
+        <div class="lang-switcher">
+            <a href="/" class="active">EN</a>
+            <a href="/BG-bg/">BG</a>
+        </div>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Tool Header -->
+    <header class="tool-header">
+        <!-- TEMPLATE: Update chapter number -->
+        <p class="chapter-marker">Tool #01</p>
+        <!-- TEMPLATE: Update tool name -->
+        <h1 class="tool-title">TOOL NAME</h1>
+        <!-- TEMPLATE: Update subtitle -->
+        <p class="tool-subtitle">Short description of what this tool does</p>
+        <!-- TEMPLATE: Update category -->
+        <span class="tool-category-badge">CATEGORY</span>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span>/</span>
+        <a href="/tools/">Tools</a>
+        <span>/</span>
+        <!-- TEMPLATE: Update current page name -->
+        <span class="current">Tool Name</span>
+    </div>
+
+    <!-- Tool Content -->
+    <main class="tool-content">
+
+        <!-- Main Tool Panel -->
+        <div class="tool-panel">
+            <div class="tool-panel-header">
+                <!-- TEMPLATE: Update panel title -->
+                <span>ENTER YOUR DATA</span>
+                <span>&#9881;</span>
+            </div>
+            <div class="tool-panel-body">
+                <!-- TEMPLATE: Customize form fields for your tool -->
+
+                <div class="form-group">
+                    <label class="form-label">Input Field 1</label>
+                    <input type="text" class="form-input" id="input1" placeholder="Enter something...">
+                    <p class="form-hint">Help text explaining what to enter</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Input Field 2</label>
+                    <textarea class="form-input" id="input2" placeholder="Enter more details..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Select Option</label>
+                    <select class="form-input" id="select1">
+                        <option value="">Choose an option...</option>
+                        <option value="option1">Option 1</option>
+                        <option value="option2">Option 2</option>
+                        <option value="option3">Option 3</option>
+                    </select>
+                </div>
+
+                <button class="btn" onclick="runTool()">
+                    ANALYZE
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Panel (hidden by default) -->
+        <div class="results-panel" id="resultsPanel">
+            <div class="results-header">
+                RESULTS
+            </div>
+            <div class="results-body">
+                <!-- TEMPLATE: Customize results display -->
+                <div class="result-item">
+                    <p class="result-label">Metric 1</p>
+                    <p class="result-value good" id="result1">--</p>
+                </div>
+                <div class="result-item">
+                    <p class="result-label">Metric 2</p>
+                    <p class="result-value" id="result2">--</p>
+                </div>
+                <div class="result-item">
+                    <p class="result-label">Metric 3</p>
+                    <p class="result-value" id="result3">--</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <section class="info-section">
+            <!-- TEMPLATE: Update with tool-specific information -->
+            <h2 class="info-title">HOW TO USE THIS TOOL</h2>
+            <div class="info-text">
+                <p>
+                    Explain how to use the tool here. Describe what inputs are needed and what results the user can expect.
+                </p>
+                <p><strong>What this tool does:</strong></p>
+                <ul>
+                    <li>Feature or capability 1</li>
+                    <li>Feature or capability 2</li>
+                    <li>Feature or capability 3</li>
+                </ul>
+                <p>
+                    Add any additional information, tips, or best practices for using this tool effectively.
+                </p>
+            </div>
+        </section>
+
+        <!-- Related Tools -->
+        <section class="related-tools">
+            <h2 class="related-title">RELATED TOOLS</h2>
+            <div class="related-grid">
+                <!-- TEMPLATE: Update with actual related tools -->
+                <a href="/tools/" class="related-card">
+                    <div class="related-card-icon">&#128202;</div>
+                    <p class="related-card-name">Another Tool</p>
+                </a>
+                <a href="/tools/" class="related-card">
+                    <div class="related-card-icon">&#128270;</div>
+                    <p class="related-card-name">Related Tool</p>
+                </a>
+                <a href="/tools/" class="related-card">
+                    <div class="related-card-icon">&#9889;</div>
+                    <p class="related-card-name">More Tools</p>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-text">&copy; 2026 <a href="https://www.linkedin.com/in/vasil-andreev-b34142219/" target="_blank">Vasil Andreev</a>. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMenu() {
+            const menu = document.querySelector('nav ul');
+            const menuToggle = document.querySelector('.menu-toggle');
+            const langSwitcher = document.querySelector('.lang-switcher');
+
+            menu.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+            langSwitcher.classList.toggle('active');
+
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', () => {
+                const menu = document.querySelector('nav ul');
+                const menuToggle = document.querySelector('.menu-toggle');
+                const langSwitcher = document.querySelector('.lang-switcher');
+
+                if (menu.classList.contains('active')) {
+                    menu.classList.remove('active');
+                    menuToggle.classList.remove('active');
+                    langSwitcher.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // TEMPLATE: Replace with actual tool logic
+        function runTool() {
+            const input1 = document.getElementById('input1').value;
+            const input2 = document.getElementById('input2').value;
+            const select1 = document.getElementById('select1').value;
+
+            // Validate inputs
+            if (!input1) {
+                alert('Please fill in the required fields');
+                return;
+            }
+
+            // Show results panel
+            const resultsPanel = document.getElementById('resultsPanel');
+            resultsPanel.classList.add('active');
+
+            // TEMPLATE: Add your tool's logic here
+            // Example: Update result values
+            document.getElementById('result1').textContent = 'Sample Result 1';
+            document.getElementById('result2').textContent = 'Sample Result 2';
+            document.getElementById('result3').textContent = 'Sample Result 3';
+
+            // Scroll to results
+            resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+
+</body>
+</html>

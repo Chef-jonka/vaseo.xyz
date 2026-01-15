@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | LLM Acceptably Report</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="{{ url_for('dashboard') }}" class="logo">
+                    <div class="logo-icon">&#129302;</div>
+                    LLM Acceptably Report
+                </a>
+                <div class="user-info">
+                    <span class="user-name">Logged in as <strong>{{ username }}</strong></span>
+                    <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-small">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'error' if category == 'error' else 'success' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <h1 class="page-title">Welcome, {{ username }}!</h1>
+            <p class="page-subtitle">Your AI Bot Traffic Reports</p>
+
+            {% if reports %}
+                <div class="reports-grid">
+                    {% for report in reports %}
+                        <div class="report-card">
+                            <div class="report-icon">
+                                <span>&#128202;</span>
+                            </div>
+                            <h3 class="report-name">{{ report.name }}</h3>
+                            <p class="report-meta">
+                                File: {{ report.filename }}<br>
+                                Size: {{ (report.size / 1024)|round(1) }} KB
+                            </p>
+                            <div class="report-actions">
+                                <a href="{{ url_for('view_report', client_id=client_id, report_filename=report.filename) }}"
+                                   class="btn btn-primary btn-small"
+                                   target="_blank">
+                                    View Report
+                                </a>
+                                <a href="{{ url_for('download_report', client_id=client_id, report_filename=report.filename) }}"
+                                   class="btn btn-secondary btn-small">
+                                    Download
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">&#128203;</div>
+                    <h3 class="empty-title">No Reports Yet</h3>
+                    <p class="empty-text">
+                        Your AI bot traffic reports will appear here once they're ready.<br>
+                        Please check back later or contact us for more information.
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Vaseo. All rights reserved. | <a href="https://vaseo.xyz" target="_blank">vaseo.xyz</a></p>
+        </div>
+    </footer>
+</body>
+</html>

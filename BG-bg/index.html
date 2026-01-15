@@ -218,6 +218,149 @@
         }
 
         /* ======================== */
+        /* MEGA NAV DROPDOWN        */
+        /* ======================== */
+        nav ul li {
+            position: relative;
+        }
+
+        .nav-dropdown-trigger {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-dropdown-trigger::after {
+            content: '';
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 5px solid #000;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-dropdown-trigger:hover::after {
+            transform: rotate(180deg);
+        }
+
+        .mega-nav {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border: 2px solid #000;
+            min-width: 280px;
+            padding: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1001;
+            margin-top: 20px;
+        }
+
+        .mega-nav::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: transparent;
+        }
+
+        .mega-nav::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid #000;
+        }
+
+        nav ul li:hover .mega-nav {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mega-nav-header {
+            background: #000;
+            color: #fff;
+            padding: 12px 20px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+        }
+
+        .mega-nav-items {
+            list-style: none;
+            padding: 10px 0;
+        }
+
+        .mega-nav-items li {
+            position: static;
+        }
+
+        .mega-nav-items a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .mega-nav-items a:hover {
+            background: #f5f5f5;
+            text-decoration: none;
+        }
+
+        .mega-nav-icon {
+            font-size: 1.2rem;
+            width: 28px;
+            text-align: center;
+        }
+
+        .mega-nav-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mega-nav-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+        }
+
+        .mega-nav-desc {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .mega-nav-footer {
+            border-top: 1px solid #eee;
+            padding: 12px 20px;
+        }
+
+        .mega-nav-footer a {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            color: #666;
+            padding: 0;
+        }
+
+        .mega-nav-footer a:hover {
+            color: #000;
+            background: transparent;
+        }
+
+        /* ======================== */
         /* MANGA PANELS             */
         /* ======================== */
         .manga-page {
@@ -1251,6 +1394,62 @@
             <li><a href="#chapter-04">Процес</a></li>
             <li><a href="#contact">Контакт</a></li>
             <li><a href="/blog/">Блог</a></li>
+            <li>
+                <a href="/tools/" class="nav-dropdown-trigger">Инструменти</a>
+                <div class="mega-nav">
+                    <div class="mega-nav-header">SEO ИНСТРУМЕНТИ</div>
+                    <ul class="mega-nav-items">
+                        <li>
+                            <a href="/tools/llm-acceptably-report/">
+                                <span class="mega-nav-icon">&#129302;</span>
+                                <span class="mega-nav-text">
+                                    <span class="mega-nav-title">LLM Acceptably Report</span>
+                                    <span class="mega-nav-desc">Анализ на AI бот трафик</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/tools/template/">
+                                <span class="mega-nav-icon">&#128270;</span>
+                                <span class="mega-nav-text">
+                                    <span class="mega-nav-title">Keyword Analyzer</span>
+                                    <span class="mega-nav-desc">Проучване на ключови думи</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/tools/">
+                                <span class="mega-nav-icon">&#128202;</span>
+                                <span class="mega-nav-text">
+                                    <span class="mega-nav-title">SERP Checker</span>
+                                    <span class="mega-nav-desc">Проверка на позиции</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/tools/">
+                                <span class="mega-nav-icon">&#128196;</span>
+                                <span class="mega-nav-text">
+                                    <span class="mega-nav-title">Meta Tag Generator</span>
+                                    <span class="mega-nav-desc">Създаване на мета тагове</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/tools/">
+                                <span class="mega-nav-icon">&#9889;</span>
+                                <span class="mega-nav-text">
+                                    <span class="mega-nav-title">Site Speed Insights</span>
+                                    <span class="mega-nav-desc">Анализ на скоростта</span>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="mega-nav-footer">
+                        <a href="/tools/">ВСИЧКИ ИНСТРУМЕНТИ &rarr;</a>
+                    </div>
+                </div>
+            </li>
         </ul>
         <div class="lang-switcher">
             <a href="/">EN</a>
@@ -1703,6 +1902,7 @@
                 <a href="#chapter-03">Услуги</a>
                 <a href="#chapter-04">Процес</a>
                 <a href="#contact">Контакт</a>
+                <a href="/tools/">Инструменти</a>
             </div>
             <div class="footer-column">
                 <h4>УСЛУГИ</h4>
