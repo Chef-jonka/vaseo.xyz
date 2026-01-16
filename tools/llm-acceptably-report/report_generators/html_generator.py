@@ -11,13 +11,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>AI Bot Traffic Analysis Report</title>
+    <title>LLM Acceptably Report</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: #f5f7fa; color: #2d3748; }}
         .nav {{ position: sticky; top: 0; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 1000; padding: 0 20px; }}
         .nav-container {{ max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 30px; padding: 15px 0; }}
+        .nav-back {{ color: #667eea; text-decoration: none; font-size: 0.9em; font-weight: 500; padding: 8px 16px; border-radius: 6px; transition: all 0.2s; }}
+        .nav-back:hover {{ background: #f7fafc; }}
         .nav-logo {{ font-size: 1.3em; font-weight: 700; color: #667eea; }}
         .nav-links {{ display: flex; gap: 5px; flex: 1; }}
         .nav-link {{ padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 0.9em; color: #4a5568; text-decoration: none; }}
@@ -99,7 +101,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <body>
     <nav class="nav">
         <div class="nav-container">
-            <div class="nav-logo">🤖 AI Bot Analysis</div>
+            <a href="javascript:history.back()" class="nav-back">← Back to Dashboard</a>
+            <div class="nav-logo">🤖 LLM Acceptably Report</div>
             <div class="nav-links">
                 <a href="#summary" class="nav-link">Summary</a>
                 <a href="#bots" class="nav-link">Bots</a>
@@ -111,15 +114,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
     </nav>
     <div class="header">
-        <h1>🤖 AI Bot Traffic Analysis</h1>
-        <p>Comprehensive Intelligence Report</p>
+        <h1>🤖 LLM Acceptably Report</h1>
+        <p>AI Bot Traffic Intelligence Report</p>
     </div>
     <div class="container">
         {content_sections}
     </div>
     <div class="footer">
         <p>Generated on {generated_date}</p>
-        <p style="margin-top: 10px;">AI Bot Traffic Analyzer v2.0</p>
+        <p style="margin-top: 10px;">LLM Acceptably Report by <a href="https://vaseo.xyz" target="_blank" style="color: #667eea;">Vaseo</a></p>
     </div>
     <script>
         {chart_scripts}
