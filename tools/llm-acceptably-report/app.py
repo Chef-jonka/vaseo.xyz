@@ -9,6 +9,8 @@ import sqlite3
 import secrets
 from functools import wraps
 from pathlib import Path
+from datetime import datetime
+from werkzeug.utils import secure_filename
 
 from flask import (
     Flask, render_template, request, redirect, url_for,
@@ -16,11 +18,25 @@ from flask import (
 )
 import bcrypt
 
+# Import the AI bot analyzer
+from aibot import AIBotAnalyzer, get_config
+from report_generators.html_generator import generate_html_report
+
 # Configuration
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(32))
 app.config['DATABASE'] = os.path.join(os.path.dirname(__file__), 'database.db')
 app.config['REPORTS_DIR'] = os.path.join(os.path.dirname(__file__), 'reports')
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'uploads')
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
+ALLOWED_EXTENSIONS = {'log', 'txt'}
+
+def allowed_file(filename):
+    """Check if file extension is allowed."""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Create upload folder if it doesn't exist
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Database helpers
 def get_db():
@@ -230,6 +246,82 @@ def dashboard():
                          username=session.get('username'),
                          client_id=client_id,
                          reports=reports)
+
+@app.route('/upload', methods=['GET', 'POST'])
+@login_required
+def upload():
+    """Upload log file and generate report."""
+    client_id = session.get('client_id')
+
+    if session.get('is_admin'):
+        flash('Admins cannot upload files. Please use a client account.', 'error')
+        return redirect(url_for('admin'))
+
+    if request.method == 'POST':
+        # Check if file was uploaded
+        if 'logfile' not in request.files:
+            flash('No file selected.', 'error')
+            return redirect(url_for('upload'))
+
+        file = request.files['logfile']
+
+        if file.filename == '':
+            flash('No file selected.', 'error')
+            return redirect(url_for('upload'))
+
+        if not allowed_file(file.filename):
+            flash('Invalid file type. Please upload a .log or .txt file.', 'error')
+            return redirect(url_for('upload'))
+
+        # Save uploaded file
+        filename = secure_filename(file.filename)
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        upload_path = os.path.join(app.config['UPLOAD_FOLDER'], f'{client_id}_{timestamp}_{filename}')
+        file.save(upload_path)
+
+        try:
+            # Run the AI bot analyzer
+            config = get_config()
+            analyzer = AIBotAnalyzer(config)
+
+            report_data = analyzer.analyze_file(upload_path, ignore_homepage_redirects=True)
+
+            if 'error' in report_data:
+                flash(f'Analysis failed: {report_data["error"]}', 'error')
+                os.remove(upload_path)  # Clean up uploaded file
+                return redirect(url_for('upload'))
+
+            # Generate HTML report
+            report_name = request.form.get('report_name', '').strip()
+            if not report_name:
+                report_name = datetime.now().strftime('%B-%Y').lower()
+
+            # Sanitize report name
+            report_name = ''.join(c if c.isalnum() or c in '-_' else '-' for c in report_name.lower())
+            report_filename = f'{report_name}.html'
+
+            # Ensure client reports directory exists
+            client_reports_dir = os.path.join(app.config['REPORTS_DIR'], client_id)
+            os.makedirs(client_reports_dir, exist_ok=True)
+
+            report_path = os.path.join(client_reports_dir, report_filename)
+
+            # Generate the HTML report
+            generate_html_report(report_data, report_path, ignore_homepage_redirects=True)
+
+            # Clean up uploaded file
+            os.remove(upload_path)
+
+            flash(f'Report generated successfully: {report_name}', 'success')
+            return redirect(url_for('dashboard'))
+
+        except Exception as e:
+            flash(f'Error processing file: {str(e)}', 'error')
+            if os.path.exists(upload_path):
+                os.remove(upload_path)
+            return redirect(url_for('upload'))
+
+    return render_template('upload.html', username=session.get('username'))
 
 @app.route('/view/<client_id>/<report_filename>')
 @login_required

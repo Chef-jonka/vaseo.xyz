@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Log File | LLM Acceptably Report</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="{{ url_for('dashboard') }}" class="logo">
+                    <div class="logo-icon">&#129302;</div>
+                    LLM Acceptably Report
+                </a>
+                <div class="user-info">
+                    <span class="user-name">Logged in as <strong>{{ username }}</strong></span>
+                    <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-small">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'error' if category == 'error' else 'success' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="back-link">
+                <a href="{{ url_for('dashboard') }}">&larr; Back to Dashboard</a>
+            </div>
+
+            <h1 class="page-title">Upload Log File</h1>
+            <p class="page-subtitle">Generate an AI Bot Traffic Analysis Report</p>
+
+            <div class="upload-card">
+                <form method="POST" enctype="multipart/form-data" class="upload-form">
+                    <div class="form-group">
+                        <label for="report_name">Report Name (optional)</label>
+                        <input type="text" id="report_name" name="report_name"
+                               placeholder="e.g., january-2025" class="form-input">
+                        <small class="form-help">Leave blank to auto-generate based on current date</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="logfile">Server Log File</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="logfile" name="logfile" accept=".log,.txt" class="file-input" required>
+                            <div class="file-upload-area" id="drop-area">
+                                <div class="file-upload-icon">&#128196;</div>
+                                <p class="file-upload-text">
+                                    <strong>Click to select</strong> or drag and drop<br>
+                                    Apache/Nginx log files (.log, .txt)
+                                </p>
+                                <p class="file-upload-hint">Max file size: 50MB</p>
+                            </div>
+                            <div class="file-selected" id="file-selected" style="display: none;">
+                                <span class="file-selected-icon">&#9989;</span>
+                                <span class="file-selected-name" id="selected-filename"></span>
+                                <button type="button" class="file-remove" id="remove-file">&times;</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-info">
+                        <h4>Supported Log Format</h4>
+                        <p>Apache/Nginx combined log format:</p>
+                        <code>IP - - [timestamp] "METHOD URL HTTP/x.x" STATUS SIZE "referrer" "user-agent"</code>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-large" id="submit-btn">
+                        <span class="btn-text">Analyze Log File</span>
+                        <span class="btn-loading" style="display: none;">Processing...</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Vaseo. All rights reserved. | <a href="https://vaseo.xyz" target="_blank">vaseo.xyz</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // File input handling
+        const fileInput = document.getElementById('logfile');
+        const dropArea = document.getElementById('drop-area');
+        const fileSelected = document.getElementById('file-selected');
+        const selectedFilename = document.getElementById('selected-filename');
+        const removeBtn = document.getElementById('remove-file');
+        const submitBtn = document.getElementById('submit-btn');
+        const form = document.querySelector('.upload-form');
+
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                showSelectedFile(this.files[0].name);
+            }
+        });
+
+        removeBtn.addEventListener('click', function() {
+            fileInput.value = '';
+            dropArea.style.display = 'block';
+            fileSelected.style.display = 'none';
+        });
+
+        function showSelectedFile(filename) {
+            selectedFilename.textContent = filename;
+            dropArea.style.display = 'none';
+            fileSelected.style.display = 'flex';
+        }
+
+        // Drag and drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.classList.add('drag-over'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.classList.remove('drag-over'), false);
+        });
+
+        dropArea.addEventListener('drop', function(e) {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                showSelectedFile(files[0].name);
+            }
+        });
+
+        // Form submission loading state
+        form.addEventListener('submit', function() {
+            submitBtn.querySelector('.btn-text').style.display = 'none';
+            submitBtn.querySelector('.btn-loading').style.display = 'inline';
+            submitBtn.disabled = true;
+        });
+    </script>
+</body>
+</html>
