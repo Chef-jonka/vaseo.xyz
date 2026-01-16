@@ -24,8 +24,15 @@
 
     <main class="dashboard">
         <div class="container">
-            <h1 class="page-title">Admin Panel</h1>
-            <p class="page-subtitle">Manage clients and their report access</p>
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Admin Panel</h1>
+                    <p class="page-subtitle">Manage clients and generate reports</p>
+                </div>
+                <a href="{{ url_for('upload') }}" class="btn btn-primary">
+                    <span>&#128194;</span> Upload Log File
+                </a>
+            </div>
 
             {% if error %}
                 <div class="alert alert-error">
@@ -143,16 +150,13 @@
 
             <!-- Instructions -->
             <div class="admin-section">
-                <h2 class="section-title">How to Add Reports</h2>
+                <h2 class="section-title">How to Generate Reports</h2>
                 <div style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8;">
-                    <p><strong>1.</strong> Generate your AI bot traffic report as an HTML file.</p>
-                    <p><strong>2.</strong> Navigate to the <code>reports/</code> folder in this application.</p>
-                    <p><strong>3.</strong> Find or create the client's folder (matching their Client ID).</p>
-                    <p><strong>4.</strong> Copy the HTML report file into that folder.</p>
-                    <p><strong>5.</strong> The report will automatically appear in the client's dashboard.</p>
-                    <br>
-                    <p><strong>Naming convention:</strong> Use descriptive names like <code>jan-2025.html</code> or <code>q1-2025-report.html</code></p>
-                    <p><strong>Reports path:</strong> <code>reports/[client-id]/[report-name].html</code></p>
+                    <p><strong>1.</strong> Create a client account using the form above.</p>
+                    <p><strong>2.</strong> Click "Upload Log File" button to upload their server log.</p>
+                    <p><strong>3.</strong> Select the client and upload their Apache/Nginx access log file.</p>
+                    <p><strong>4.</strong> The system will analyze the log for AI bot traffic and generate a report.</p>
+                    <p><strong>5.</strong> Share the login credentials with your client so they can view their reports.</p>
                 </div>
             </div>
         </div>

@@ -34,15 +34,8 @@
                 {% endif %}
             {% endwith %}
 
-            <div class="page-header">
-                <div>
-                    <h1 class="page-title">Welcome, {{ username }}!</h1>
-                    <p class="page-subtitle">Your AI Bot Traffic Reports</p>
-                </div>
-                <a href="{{ url_for('upload') }}" class="btn btn-primary">
-                    <span>&#128194;</span> Upload Log File
-                </a>
-            </div>
+            <h1 class="page-title">Welcome, {{ username }}!</h1>
+            <p class="page-subtitle">Your AI Bot Traffic Reports</p>
 
             {% if reports %}
                 <div class="reports-grid">
@@ -75,11 +68,9 @@
                     <div class="empty-icon">&#128203;</div>
                     <h3 class="empty-title">No Reports Yet</h3>
                     <p class="empty-text">
-                        Upload your server log file to generate an AI bot traffic analysis report.
+                        Your AI bot traffic reports will appear here once they're ready.<br>
+                        Please check back later or contact your administrator.
                     </p>
-                    <a href="{{ url_for('upload') }}" class="btn btn-primary btn-large">
-                        <span>&#128194;</span> Upload Your First Log File
-                    </a>
                 </div>
             {% endif %}
         </div>

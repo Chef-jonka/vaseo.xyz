@@ -248,30 +248,33 @@ def dashboard():
                          reports=reports)
 
 @app.route('/upload', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def upload():
-    """Upload log file and generate report."""
-    client_id = session.get('client_id')
-
-    if session.get('is_admin'):
-        flash('Admins cannot upload files. Please use a client account.', 'error')
-        return redirect(url_for('admin'))
+    """Admin: Upload log file and generate report for a client."""
+    # Get list of clients for dropdown
+    clients = get_all_clients()
 
     if request.method == 'POST':
+        # Get selected client
+        client_id = request.form.get('client_id', '').strip()
+        if not client_id:
+            flash('Please select a client.', 'error')
+            return render_template('upload.html', username=session.get('username'), clients=clients)
+
         # Check if file was uploaded
         if 'logfile' not in request.files:
             flash('No file selected.', 'error')
-            return redirect(url_for('upload'))
+            return render_template('upload.html', username=session.get('username'), clients=clients)
 
         file = request.files['logfile']
 
         if file.filename == '':
             flash('No file selected.', 'error')
-            return redirect(url_for('upload'))
+            return render_template('upload.html', username=session.get('username'), clients=clients)
 
         if not allowed_file(file.filename):
             flash('Invalid file type. Please upload a .log or .txt file.', 'error')
-            return redirect(url_for('upload'))
+            return render_template('upload.html', username=session.get('username'), clients=clients)
 
         # Save uploaded file
         filename = secure_filename(file.filename)
@@ -312,16 +315,16 @@ def upload():
             # Clean up uploaded file
             os.remove(upload_path)
 
-            flash(f'Report generated successfully: {report_name}', 'success')
-            return redirect(url_for('dashboard'))
+            flash(f'Report "{report_name}" generated successfully for client: {client_id}', 'success')
+            return redirect(url_for('admin'))
 
         except Exception as e:
             flash(f'Error processing file: {str(e)}', 'error')
             if os.path.exists(upload_path):
                 os.remove(upload_path)
-            return redirect(url_for('upload'))
+            return render_template('upload.html', username=session.get('username'), clients=clients)
 
-    return render_template('upload.html', username=session.get('username'))
+    return render_template('upload.html', username=session.get('username'), clients=clients)
 
 @app.route('/view/<client_id>/<report_filename>')
 @login_required
