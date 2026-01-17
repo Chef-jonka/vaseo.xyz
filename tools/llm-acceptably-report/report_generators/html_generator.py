@@ -101,7 +101,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <body>
     <nav class="nav">
         <div class="nav-container">
-            <a href="javascript:history.back()" class="nav-back">← Back to Dashboard</a>
+            <a href="/dashboard" class="nav-back">← Back to Dashboard</a>
             <div class="nav-logo">🤖 LLM Acceptably Report</div>
             <div class="nav-links">
                 <a href="#summary" class="nav-link">Summary</a>
