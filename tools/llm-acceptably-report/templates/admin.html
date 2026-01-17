@@ -115,6 +115,8 @@
                             <tr>
                                 <th>Username</th>
                                 <th>Client ID</th>
+                                <th>Reports</th>
+                                <th>Last Login</th>
                                 <th>Created</th>
                                 <th>Actions</th>
                             </tr>
@@ -126,8 +128,21 @@
                                     <td>
                                         <span class="client-id-badge">{{ client.client_id }}</span>
                                     </td>
+                                    <td>
+                                        <a href="{{ url_for('admin_client_reports', client_id=client.client_id) }}" class="report-count-badge">
+                                            {{ client.report_count }} report{{ 's' if client.report_count != 1 else '' }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {% if client.last_login %}
+                                            <span class="last-login">{{ client.last_login }}</span>
+                                        {% else %}
+                                            <span class="never-logged-in">Never</span>
+                                        {% endif %}
+                                    </td>
                                     <td>{{ client.created_at }}</td>
                                     <td>
+                                        <a href="{{ url_for('admin_client_reports', client_id=client.client_id) }}" class="btn btn-secondary btn-small">View Reports</a>
                                         <form method="POST" action="{{ url_for('admin') }}" style="display: inline;"
                                               onsubmit="return confirm('Are you sure you want to delete this client?');">
                                             <input type="hidden" name="action" value="delete_client">

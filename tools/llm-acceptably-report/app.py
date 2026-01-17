@@ -58,9 +58,16 @@ def init_db():
             password_hash TEXT NOT NULL,
             client_id TEXT,
             is_admin INTEGER DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_login TIMESTAMP
         )
     ''')
+
+    # Add last_login column if it doesn't exist (for existing databases)
+    try:
+        cursor.execute('ALTER TABLE users ADD COLUMN last_login TIMESTAMP')
+    except sqlite3.OperationalError:
+        pass  # Column already exists
 
     # Check if demo user exists
     cursor.execute('SELECT id FROM users WHERE username = ?', ('demo',))
@@ -97,13 +104,22 @@ def get_user(username):
     return user
 
 def get_all_clients():
-    """Get all non-admin users."""
+    """Get all non-admin users with report counts."""
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT id, username, client_id, created_at FROM users WHERE is_admin = 0 ORDER BY created_at DESC')
+    cursor.execute('SELECT id, username, client_id, created_at, last_login FROM users WHERE is_admin = 0 ORDER BY created_at DESC')
     clients = cursor.fetchall()
     conn.close()
-    return clients
+
+    # Add report count for each client
+    clients_with_reports = []
+    for client in clients:
+        client_dict = dict(client)
+        reports = get_client_reports(client['client_id'])
+        client_dict['report_count'] = len(reports)
+        clients_with_reports.append(client_dict)
+
+    return clients_with_reports
 
 def create_user(username, password, client_id, is_admin=False):
     """Create a new user."""
@@ -213,6 +229,14 @@ def login():
             session['username'] = user['username']
             session['client_id'] = user['client_id']
             session['is_admin'] = bool(user['is_admin'])
+
+            # Update last login time
+            conn = get_db()
+            cursor = conn.cursor()
+            cursor.execute('UPDATE users SET last_login = ? WHERE id = ?',
+                         (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), user['id']))
+            conn.commit()
+            conn.close()
 
             flash(f'Welcome back, {username}!', 'success')
 
@@ -423,6 +447,98 @@ def admin():
                          clients=clients,
                          error=error,
                          success=success)
+
+@app.route('/admin/client/<client_id>')
+@admin_required
+def admin_client_reports(client_id):
+    """Admin: View all reports for a specific client."""
+    # Get client info
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT username, client_id, created_at, last_login FROM users WHERE client_id = ? AND is_admin = 0', (client_id,))
+    client = cursor.fetchone()
+    conn.close()
+
+    if not client:
+        flash('Client not found.', 'error')
+        return redirect(url_for('admin'))
+
+    reports = get_client_reports(client_id)
+
+    return render_template('admin_client.html',
+                         username=session.get('username'),
+                         client=dict(client),
+                         reports=reports)
+
+@app.route('/admin/report/rename', methods=['POST'])
+@admin_required
+def rename_report():
+    """Admin: Rename a report."""
+    client_id = request.form.get('client_id', '').strip()
+    old_filename = request.form.get('old_filename', '').strip()
+    new_name = request.form.get('new_name', '').strip()
+
+    if not client_id or not old_filename or not new_name:
+        flash('Missing required fields.', 'error')
+        return redirect(url_for('admin'))
+
+    # Validate filenames
+    if '..' in old_filename or '/' in old_filename:
+        flash('Invalid filename.', 'error')
+        return redirect(url_for('admin_client_reports', client_id=client_id))
+
+    # Sanitize new name
+    new_name = ''.join(c if c.isalnum() or c in '-_' else '-' for c in new_name.lower())
+    new_filename = f'{new_name}.html'
+
+    old_path = os.path.join(app.config['REPORTS_DIR'], client_id, old_filename)
+    new_path = os.path.join(app.config['REPORTS_DIR'], client_id, new_filename)
+
+    if not os.path.exists(old_path):
+        flash('Report not found.', 'error')
+        return redirect(url_for('admin_client_reports', client_id=client_id))
+
+    if os.path.exists(new_path) and old_path != new_path:
+        flash('A report with that name already exists.', 'error')
+        return redirect(url_for('admin_client_reports', client_id=client_id))
+
+    try:
+        os.rename(old_path, new_path)
+        flash(f'Report renamed to "{new_name}" successfully.', 'success')
+    except Exception as e:
+        flash(f'Error renaming report: {str(e)}', 'error')
+
+    return redirect(url_for('admin_client_reports', client_id=client_id))
+
+@app.route('/admin/report/delete', methods=['POST'])
+@admin_required
+def delete_report():
+    """Admin: Delete a report."""
+    client_id = request.form.get('client_id', '').strip()
+    filename = request.form.get('filename', '').strip()
+
+    if not client_id or not filename:
+        flash('Missing required fields.', 'error')
+        return redirect(url_for('admin'))
+
+    # Validate filename
+    if '..' in filename or '/' in filename:
+        flash('Invalid filename.', 'error')
+        return redirect(url_for('admin_client_reports', client_id=client_id))
+
+    report_path = os.path.join(app.config['REPORTS_DIR'], client_id, filename)
+
+    if not os.path.exists(report_path):
+        flash('Report not found.', 'error')
+        return redirect(url_for('admin_client_reports', client_id=client_id))
+
+    try:
+        os.remove(report_path)
+        flash('Report deleted successfully.', 'success')
+    except Exception as e:
+        flash(f'Error deleting report: {str(e)}', 'error')
+
+    return redirect(url_for('admin_client_reports', client_id=client_id))
 
 # Error handlers
 @app.errorhandler(403)
