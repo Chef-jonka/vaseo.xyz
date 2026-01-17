@@ -7,20 +7,31 @@ A simple Flask app for clients to view their AI bot traffic analysis reports.
 import os
 import sqlite3
 import secrets
+import re
 from functools import wraps
 from pathlib import Path
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from io import StringIO
 
 from flask import (
     Flask, render_template, request, redirect, url_for,
-    session, flash, send_from_directory, abort
+    session, flash, send_from_directory, abort, Response
 )
 import bcrypt
 
 # Import the AI bot analyzer
 from aibot import AIBotAnalyzer, get_config
 from report_generators.html_generator import generate_html_report
+
+# Check if PostgreSQL is available
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+    USE_POSTGRES = True
+else:
+    USE_POSTGRES = False
 
 # Configuration
 app = Flask(__name__)
@@ -41,61 +52,128 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 # Database helpers
 def get_db():
     """Get database connection."""
-    conn = sqlite3.connect(app.config['DATABASE'])
-    conn.row_factory = sqlite3.Row
-    return conn
+    if USE_POSTGRES:
+        # Fix Render's postgres:// URL to postgresql://
+        db_url = DATABASE_URL
+        if db_url.startswith('postgres://'):
+            db_url = db_url.replace('postgres://', 'postgresql://', 1)
+        conn = psycopg2.connect(db_url)
+        return conn
+    else:
+        conn = sqlite3.connect(app.config['DATABASE'])
+        conn.row_factory = sqlite3.Row
+        return conn
 
 def init_db():
     """Initialize the database with tables and default users."""
     conn = get_db()
     cursor = conn.cursor()
 
-    # Create users table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            client_id TEXT,
-            is_admin INTEGER DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            last_login TIMESTAMP
-        )
-    ''')
+    if USE_POSTGRES:
+        # PostgreSQL syntax
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                username TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                client_id TEXT,
+                is_admin INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_login TIMESTAMP,
+                company_name TEXT
+            )
+        ''')
 
-    # Add last_login column if it doesn't exist (for existing databases)
-    try:
-        cursor.execute('ALTER TABLE users ADD COLUMN last_login TIMESTAMP')
-    except sqlite3.OperationalError:
-        pass  # Column already exists
+        # Create reports table for persistent storage
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS reports (
+                id SERIAL PRIMARY KEY,
+                client_id TEXT NOT NULL,
+                filename TEXT NOT NULL,
+                content TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(client_id, filename)
+            )
+        ''')
 
-    # Add company_name column if it doesn't exist
-    try:
-        cursor.execute('ALTER TABLE users ADD COLUMN company_name TEXT')
-    except sqlite3.OperationalError:
-        pass  # Column already exists
+        # Check if demo user exists
+        cursor.execute('SELECT id FROM users WHERE username = %s', ('demo',))
+        if not cursor.fetchone():
+            demo_hash = bcrypt.hashpw('demo123'.encode('utf-8'), bcrypt.gensalt())
+            cursor.execute(
+                'INSERT INTO users (username, password_hash, client_id, is_admin) VALUES (%s, %s, %s, %s)',
+                ('demo', demo_hash.decode('utf-8'), 'demo-client', 0)
+            )
+            print("Created demo user: demo / demo123")
 
-    # Check if demo user exists
-    cursor.execute('SELECT id FROM users WHERE username = ?', ('demo',))
-    if not cursor.fetchone():
-        # Create demo user
-        demo_hash = bcrypt.hashpw('demo123'.encode('utf-8'), bcrypt.gensalt())
-        cursor.execute(
-            'INSERT INTO users (username, password_hash, client_id, is_admin) VALUES (?, ?, ?, ?)',
-            ('demo', demo_hash.decode('utf-8'), 'demo-client', 0)
-        )
-        print("Created demo user: demo / demo123")
+        # Check if admin user exists
+        cursor.execute('SELECT id FROM users WHERE username = %s', ('admin',))
+        if not cursor.fetchone():
+            admin_hash = bcrypt.hashpw('admin123'.encode('utf-8'), bcrypt.gensalt())
+            cursor.execute(
+                'INSERT INTO users (username, password_hash, client_id, is_admin) VALUES (%s, %s, %s, %s)',
+                ('admin', admin_hash.decode('utf-8'), None, 1)
+            )
+            print("Created admin user: admin / admin123")
+    else:
+        # SQLite syntax
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                client_id TEXT,
+                is_admin INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_login TIMESTAMP
+            )
+        ''')
 
-    # Check if admin user exists
-    cursor.execute('SELECT id FROM users WHERE username = ?', ('admin',))
-    if not cursor.fetchone():
-        # Create admin user
-        admin_hash = bcrypt.hashpw('admin123'.encode('utf-8'), bcrypt.gensalt())
-        cursor.execute(
-            'INSERT INTO users (username, password_hash, client_id, is_admin) VALUES (?, ?, ?, ?)',
-            ('admin', admin_hash.decode('utf-8'), None, 1)
-        )
-        print("Created admin user: admin / admin123")
+        # Create reports table for persistent storage
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS reports (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                client_id TEXT NOT NULL,
+                filename TEXT NOT NULL,
+                content TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(client_id, filename)
+            )
+        ''')
+
+        # Add last_login column if it doesn't exist (for existing databases)
+        try:
+            cursor.execute('ALTER TABLE users ADD COLUMN last_login TIMESTAMP')
+        except sqlite3.OperationalError:
+            pass  # Column already exists
+
+        # Add company_name column if it doesn't exist
+        try:
+            cursor.execute('ALTER TABLE users ADD COLUMN company_name TEXT')
+        except sqlite3.OperationalError:
+            pass  # Column already exists
+
+        # Check if demo user exists
+        cursor.execute('SELECT id FROM users WHERE username = ?', ('demo',))
+        if not cursor.fetchone():
+            demo_hash = bcrypt.hashpw('demo123'.encode('utf-8'), bcrypt.gensalt())
+            cursor.execute(
+                'INSERT INTO users (username, password_hash, client_id, is_admin) VALUES (?, ?, ?, ?)',
+                ('demo', demo_hash.decode('utf-8'), 'demo-client', 0)
+            )
+            print("Created demo user: demo / demo123")
+
+        # Check if admin user exists
+        cursor.execute('SELECT id FROM users WHERE username = ?', ('admin',))
+        if not cursor.fetchone():
+            admin_hash = bcrypt.hashpw('admin123'.encode('utf-8'), bcrypt.gensalt())
+            cursor.execute(
+                'INSERT INTO users (username, password_hash, client_id, is_admin) VALUES (?, ?, ?, ?)',
+                ('admin', admin_hash.decode('utf-8'), None, 1)
+            )
+            print("Created admin user: admin / admin123")
 
     conn.commit()
     conn.close()
@@ -104,8 +182,16 @@ def get_user(username):
     """Get user by username."""
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
-    user = cursor.fetchone()
+    if USE_POSTGRES:
+        cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
+        user = cursor.fetchone()
+        if user:
+            # Convert to dict-like for consistency
+            columns = [desc[0] for desc in cursor.description]
+            user = dict(zip(columns, user))
+    else:
+        cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
+        user = cursor.fetchone()
     conn.close()
     return user
 
@@ -115,13 +201,21 @@ def get_all_clients():
     cursor = conn.cursor()
     cursor.execute('SELECT id, username, client_id, created_at, last_login, company_name FROM users WHERE is_admin = 0 ORDER BY created_at DESC')
     clients = cursor.fetchall()
+
+    if USE_POSTGRES:
+        columns = [desc[0] for desc in cursor.description]
+        clients = [dict(zip(columns, row)) for row in clients]
+
     conn.close()
 
     # Add report count for each client
     clients_with_reports = []
     for client in clients:
-        client_dict = dict(client)
-        reports = get_client_reports(client['client_id'])
+        if USE_POSTGRES:
+            client_dict = client
+        else:
+            client_dict = dict(client)
+        reports = get_client_reports(client_dict.get('client_id') or client.get('client_id'))
         client_dict['report_count'] = len(reports)
         clients_with_reports.append(client_dict)
 
@@ -135,20 +229,26 @@ def create_user(username, password, client_id, is_admin=False, company_name=None
     password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
     try:
-        cursor.execute(
-            'INSERT INTO users (username, password_hash, client_id, is_admin, company_name) VALUES (?, ?, ?, ?, ?)',
-            (username, password_hash.decode('utf-8'), client_id, 1 if is_admin else 0, company_name)
-        )
+        if USE_POSTGRES:
+            cursor.execute(
+                'INSERT INTO users (username, password_hash, client_id, is_admin, company_name) VALUES (%s, %s, %s, %s, %s)',
+                (username, password_hash.decode('utf-8'), client_id, 1 if is_admin else 0, company_name)
+            )
+        else:
+            cursor.execute(
+                'INSERT INTO users (username, password_hash, client_id, is_admin, company_name) VALUES (?, ?, ?, ?, ?)',
+                (username, password_hash.decode('utf-8'), client_id, 1 if is_admin else 0, company_name)
+            )
         conn.commit()
 
-        # Create client reports folder
-        if client_id:
+        # Create client reports folder (for local development)
+        if client_id and not USE_POSTGRES:
             client_dir = os.path.join(app.config['REPORTS_DIR'], client_id)
             os.makedirs(client_dir, exist_ok=True)
 
         conn.close()
         return True
-    except sqlite3.IntegrityError:
+    except Exception as e:
         conn.close()
         return False
 
@@ -161,44 +261,71 @@ def get_client_reports(client_id):
     if not client_id:
         return []
 
-    client_dir = os.path.join(app.config['REPORTS_DIR'], client_id)
+    if USE_POSTGRES:
+        # Get reports from database
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT filename, content, created_at, modified_at FROM reports WHERE client_id = %s ORDER BY modified_at DESC',
+            (client_id,)
+        )
+        rows = cursor.fetchall()
+        conn.close()
 
-    if not os.path.exists(client_dir):
-        os.makedirs(client_dir, exist_ok=True)
-        return []
+        reports = []
+        for row in rows:
+            filename, content, created_at, modified_at = row
+            modified_date = modified_at if modified_at else created_at
 
-    reports = []
-    for filename in os.listdir(client_dir):
-        if filename.endswith('.html'):
-            filepath = os.path.join(client_dir, filename)
-            modified_time = os.path.getmtime(filepath)
-            modified_date = datetime.fromtimestamp(modified_time)
-
-            # Try to extract summary from report
-            summary = extract_report_summary(filepath)
+            # Extract summary from content
+            summary = extract_report_summary_from_content(content)
 
             reports.append({
                 'filename': filename,
                 'name': filename.replace('.html', '').replace('-', ' ').title(),
-                'size': os.path.getsize(filepath),
-                'modified': modified_time,
-                'modified_date': modified_date.strftime('%Y-%m-%d'),
-                'modified_formatted': modified_date.strftime('%b %d, %Y'),
+                'size': len(content),
+                'modified': modified_date.timestamp() if modified_date else 0,
+                'modified_date': modified_date.strftime('%Y-%m-%d') if modified_date else '',
+                'modified_formatted': modified_date.strftime('%b %d, %Y') if modified_date else '',
                 'summary': summary
             })
 
-    # Sort by modified time descending (newest first)
-    reports.sort(key=lambda x: x['modified'], reverse=True)
-    return reports
+        return reports
+    else:
+        # Get reports from filesystem
+        client_dir = os.path.join(app.config['REPORTS_DIR'], client_id)
 
-def extract_report_summary(filepath):
-    """Extract key stats from a report HTML file."""
+        if not os.path.exists(client_dir):
+            os.makedirs(client_dir, exist_ok=True)
+            return []
+
+        reports = []
+        for filename in os.listdir(client_dir):
+            if filename.endswith('.html'):
+                filepath = os.path.join(client_dir, filename)
+                modified_time = os.path.getmtime(filepath)
+                modified_date = datetime.fromtimestamp(modified_time)
+
+                # Try to extract summary from report
+                summary = extract_report_summary(filepath)
+
+                reports.append({
+                    'filename': filename,
+                    'name': filename.replace('.html', '').replace('-', ' ').title(),
+                    'size': os.path.getsize(filepath),
+                    'modified': modified_time,
+                    'modified_date': modified_date.strftime('%Y-%m-%d'),
+                    'modified_formatted': modified_date.strftime('%b %d, %Y'),
+                    'summary': summary
+                })
+
+        # Sort by modified time descending (newest first)
+        reports.sort(key=lambda x: x['modified'], reverse=True)
+        return reports
+
+def extract_report_summary_from_content(content):
+    """Extract key stats from report HTML content."""
     try:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            content = f.read()
-
-        import re
-
         summary = {
             'total_requests': None,
             'success_rate': None,
@@ -230,6 +357,15 @@ def extract_report_summary(filepath):
             summary['top_bot'] = match.group(1).strip()
 
         return summary
+    except:
+        return None
+
+def extract_report_summary(filepath):
+    """Extract key stats from a report HTML file."""
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            content = f.read()
+        return extract_report_summary_from_content(content)
     except:
         return None
 
@@ -286,13 +422,17 @@ def login():
             session['username'] = user['username']
             session['client_id'] = user['client_id']
             session['is_admin'] = bool(user['is_admin'])
-            session['company_name'] = user['company_name'] if 'company_name' in user.keys() else None
+            session['company_name'] = user.get('company_name')
 
             # Update last login time
             conn = get_db()
             cursor = conn.cursor()
-            cursor.execute('UPDATE users SET last_login = ? WHERE id = ?',
-                         (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), user['id']))
+            if USE_POSTGRES:
+                cursor.execute('UPDATE users SET last_login = %s WHERE id = %s',
+                             (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), user['id']))
+            else:
+                cursor.execute('UPDATE users SET last_login = ? WHERE id = ?',
+                             (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), user['id']))
             conn.commit()
             conn.close()
 
@@ -394,14 +534,40 @@ def upload():
             report_name = ''.join(c if c.isalnum() or c in '-_' else '-' for c in report_name.lower())
             report_filename = f'{report_name}.html'
 
-            # Ensure client reports directory exists
-            client_reports_dir = os.path.join(app.config['REPORTS_DIR'], client_id)
-            os.makedirs(client_reports_dir, exist_ok=True)
+            if USE_POSTGRES:
+                # Generate report to a temporary file, then store in database
+                import tempfile
+                with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False) as tmp:
+                    tmp_path = tmp.name
 
-            report_path = os.path.join(client_reports_dir, report_filename)
+                generate_html_report(report_data, tmp_path, ignore_homepage_redirects=True)
 
-            # Generate the HTML report
-            generate_html_report(report_data, report_path, ignore_homepage_redirects=True)
+                # Read the generated HTML
+                with open(tmp_path, 'r', encoding='utf-8') as f:
+                    html_content = f.read()
+
+                os.remove(tmp_path)
+
+                # Store in database
+                conn = get_db()
+                cursor = conn.cursor()
+                cursor.execute('''
+                    INSERT INTO reports (client_id, filename, content, modified_at)
+                    VALUES (%s, %s, %s, %s)
+                    ON CONFLICT (client_id, filename)
+                    DO UPDATE SET content = EXCLUDED.content, modified_at = EXCLUDED.modified_at
+                ''', (client_id, report_filename, html_content, datetime.now()))
+                conn.commit()
+                conn.close()
+            else:
+                # Store on filesystem
+                client_reports_dir = os.path.join(app.config['REPORTS_DIR'], client_id)
+                os.makedirs(client_reports_dir, exist_ok=True)
+
+                report_path = os.path.join(client_reports_dir, report_filename)
+
+                # Generate the HTML report
+                generate_html_report(report_data, report_path, ignore_homepage_redirects=True)
 
             # Clean up uploaded file
             os.remove(upload_path)
@@ -432,17 +598,33 @@ def view_report(client_id, report_filename):
     if not report_filename.endswith('.html'):
         abort(400)
 
-    # Check file exists
-    report_path = os.path.join(app.config['REPORTS_DIR'], client_id, report_filename)
+    if USE_POSTGRES:
+        # Get report from database
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT content FROM reports WHERE client_id = %s AND filename = %s',
+            (client_id, report_filename)
+        )
+        row = cursor.fetchone()
+        conn.close()
 
-    if not os.path.exists(report_path):
-        abort(404)
+        if not row:
+            abort(404)
 
-    # Serve the HTML file
-    return send_from_directory(
-        os.path.join(app.config['REPORTS_DIR'], client_id),
-        report_filename
-    )
+        return Response(row[0], mimetype='text/html')
+    else:
+        # Check file exists
+        report_path = os.path.join(app.config['REPORTS_DIR'], client_id, report_filename)
+
+        if not os.path.exists(report_path):
+            abort(404)
+
+        # Serve the HTML file
+        return send_from_directory(
+            os.path.join(app.config['REPORTS_DIR'], client_id),
+            report_filename
+        )
 
 @app.route('/download/<client_id>/<report_filename>')
 @login_required
@@ -459,16 +641,34 @@ def download_report(client_id, report_filename):
     if not report_filename.endswith('.html'):
         abort(400)
 
-    report_path = os.path.join(app.config['REPORTS_DIR'], client_id, report_filename)
+    if USE_POSTGRES:
+        # Get report from database
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT content FROM reports WHERE client_id = %s AND filename = %s',
+            (client_id, report_filename)
+        )
+        row = cursor.fetchone()
+        conn.close()
 
-    if not os.path.exists(report_path):
-        abort(404)
+        if not row:
+            abort(404)
 
-    return send_from_directory(
-        os.path.join(app.config['REPORTS_DIR'], client_id),
-        report_filename,
-        as_attachment=True
-    )
+        response = Response(row[0], mimetype='text/html')
+        response.headers['Content-Disposition'] = f'attachment; filename="{report_filename}"'
+        return response
+    else:
+        report_path = os.path.join(app.config['REPORTS_DIR'], client_id, report_filename)
+
+        if not os.path.exists(report_path):
+            abort(404)
+
+        return send_from_directory(
+            os.path.join(app.config['REPORTS_DIR'], client_id),
+            report_filename,
+            as_attachment=True
+        )
 
 @app.route('/admin', methods=['GET', 'POST'])
 @admin_required
@@ -503,7 +703,10 @@ def admin():
             if user_id:
                 conn = get_db()
                 cursor = conn.cursor()
-                cursor.execute('DELETE FROM users WHERE id = ? AND is_admin = 0', (user_id,))
+                if USE_POSTGRES:
+                    cursor.execute('DELETE FROM users WHERE id = %s AND is_admin = 0', (user_id,))
+                else:
+                    cursor.execute('DELETE FROM users WHERE id = ? AND is_admin = 0', (user_id,))
                 conn.commit()
                 conn.close()
                 success = 'Client deleted successfully.'
@@ -523,8 +726,19 @@ def admin_client_reports(client_id):
     # Get client info
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT username, client_id, created_at, last_login FROM users WHERE client_id = ? AND is_admin = 0', (client_id,))
-    client = cursor.fetchone()
+    if USE_POSTGRES:
+        cursor.execute('SELECT username, client_id, created_at, last_login FROM users WHERE client_id = %s AND is_admin = 0', (client_id,))
+        row = cursor.fetchone()
+        if row:
+            columns = [desc[0] for desc in cursor.description]
+            client = dict(zip(columns, row))
+        else:
+            client = None
+    else:
+        cursor.execute('SELECT username, client_id, created_at, last_login FROM users WHERE client_id = ? AND is_admin = 0', (client_id,))
+        client = cursor.fetchone()
+        if client:
+            client = dict(client)
     conn.close()
 
     if not client:
@@ -535,7 +749,7 @@ def admin_client_reports(client_id):
 
     return render_template('admin_client.html',
                          username=session.get('username'),
-                         client=dict(client),
+                         client=client,
                          reports=reports)
 
 @app.route('/admin/report/rename', methods=['POST'])
@@ -559,22 +773,51 @@ def rename_report():
     new_name = ''.join(c if c.isalnum() or c in '-_' else '-' for c in new_name.lower())
     new_filename = f'{new_name}.html'
 
-    old_path = os.path.join(app.config['REPORTS_DIR'], client_id, old_filename)
-    new_path = os.path.join(app.config['REPORTS_DIR'], client_id, new_filename)
+    if USE_POSTGRES:
+        conn = get_db()
+        cursor = conn.cursor()
 
-    if not os.path.exists(old_path):
-        flash('Report not found.', 'error')
-        return redirect(url_for('admin_client_reports', client_id=client_id))
+        # Check if old report exists
+        cursor.execute('SELECT id FROM reports WHERE client_id = %s AND filename = %s', (client_id, old_filename))
+        if not cursor.fetchone():
+            conn.close()
+            flash('Report not found.', 'error')
+            return redirect(url_for('admin_client_reports', client_id=client_id))
 
-    if os.path.exists(new_path) and old_path != new_path:
-        flash('A report with that name already exists.', 'error')
-        return redirect(url_for('admin_client_reports', client_id=client_id))
+        # Check if new filename already exists
+        if old_filename != new_filename:
+            cursor.execute('SELECT id FROM reports WHERE client_id = %s AND filename = %s', (client_id, new_filename))
+            if cursor.fetchone():
+                conn.close()
+                flash('A report with that name already exists.', 'error')
+                return redirect(url_for('admin_client_reports', client_id=client_id))
 
-    try:
-        os.rename(old_path, new_path)
-        flash(f'Report renamed to "{new_name}" successfully.', 'success')
-    except Exception as e:
-        flash(f'Error renaming report: {str(e)}', 'error')
+        try:
+            cursor.execute('UPDATE reports SET filename = %s, modified_at = %s WHERE client_id = %s AND filename = %s',
+                         (new_filename, datetime.now(), client_id, old_filename))
+            conn.commit()
+            flash(f'Report renamed to "{new_name}" successfully.', 'success')
+        except Exception as e:
+            flash(f'Error renaming report: {str(e)}', 'error')
+        finally:
+            conn.close()
+    else:
+        old_path = os.path.join(app.config['REPORTS_DIR'], client_id, old_filename)
+        new_path = os.path.join(app.config['REPORTS_DIR'], client_id, new_filename)
+
+        if not os.path.exists(old_path):
+            flash('Report not found.', 'error')
+            return redirect(url_for('admin_client_reports', client_id=client_id))
+
+        if os.path.exists(new_path) and old_path != new_path:
+            flash('A report with that name already exists.', 'error')
+            return redirect(url_for('admin_client_reports', client_id=client_id))
+
+        try:
+            os.rename(old_path, new_path)
+            flash(f'Report renamed to "{new_name}" successfully.', 'success')
+        except Exception as e:
+            flash(f'Error renaming report: {str(e)}', 'error')
 
     return redirect(url_for('admin_client_reports', client_id=client_id))
 
@@ -594,17 +837,36 @@ def delete_report():
         flash('Invalid filename.', 'error')
         return redirect(url_for('admin_client_reports', client_id=client_id))
 
-    report_path = os.path.join(app.config['REPORTS_DIR'], client_id, filename)
+    if USE_POSTGRES:
+        conn = get_db()
+        cursor = conn.cursor()
 
-    if not os.path.exists(report_path):
-        flash('Report not found.', 'error')
-        return redirect(url_for('admin_client_reports', client_id=client_id))
+        cursor.execute('SELECT id FROM reports WHERE client_id = %s AND filename = %s', (client_id, filename))
+        if not cursor.fetchone():
+            conn.close()
+            flash('Report not found.', 'error')
+            return redirect(url_for('admin_client_reports', client_id=client_id))
 
-    try:
-        os.remove(report_path)
-        flash('Report deleted successfully.', 'success')
-    except Exception as e:
-        flash(f'Error deleting report: {str(e)}', 'error')
+        try:
+            cursor.execute('DELETE FROM reports WHERE client_id = %s AND filename = %s', (client_id, filename))
+            conn.commit()
+            flash('Report deleted successfully.', 'success')
+        except Exception as e:
+            flash(f'Error deleting report: {str(e)}', 'error')
+        finally:
+            conn.close()
+    else:
+        report_path = os.path.join(app.config['REPORTS_DIR'], client_id, filename)
+
+        if not os.path.exists(report_path):
+            flash('Report not found.', 'error')
+            return redirect(url_for('admin_client_reports', client_id=client_id))
+
+        try:
+            os.remove(report_path)
+            flash('Report deleted successfully.', 'success')
+        except Exception as e:
+            flash(f'Error deleting report: {str(e)}', 'error')
 
     return redirect(url_for('admin_client_reports', client_id=client_id))
 
