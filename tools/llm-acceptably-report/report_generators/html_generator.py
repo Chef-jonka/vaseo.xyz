@@ -115,6 +115,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             <div class="nav-links">
                 <a href="#summary" class="nav-link">Summary</a>
                 <a href="#bots" class="nav-link">Bots</a>
+                <a href="#technical" class="nav-link">Technical</a>
                 <a href="#patterns" class="nav-link">Patterns</a>
                 <a href="#behavior" class="nav-link">Behavior</a>
                 <a href="#issues" class="nav-link">Issues</a>
@@ -183,7 +184,9 @@ def generate_executive_summary(report):
     top_bot = report['bot_statistics'][0] if report['bot_statistics'] else {'type': 'N/A'}
     critical_issues = sum(1 for rec in report.get('recommendations', []) if rec['severity'] == 'HIGH')
     top_action = report['recommendations'][0] if report.get('recommendations') else None
-    
+    human_vs_bot = report.get('human_vs_bot', {})
+    bandwidth = report.get('bandwidth', {})
+
     html = f"""
     <div id="summary" class="section exec-summary">
         <div class="section-header">
@@ -214,6 +217,28 @@ def generate_executive_summary(report):
                 <div class="quick-stat-label">Analysis Period</div>
                 <div class="quick-stat-value" style="font-size: 1em;">{report['date_range']['start']}</div>
                 <div style="font-size: 0.85em; color: #718096;">to {report['date_range']['end']}</div>
+            </div>
+        </div>
+
+        <!-- Human vs Bot Ratio -->
+        <div class="comparison-box" style="margin-top: 20px;">
+            <div class="comparison-title">👥 Human vs AI Bot Traffic</div>
+            <div class="comparison-items">
+                <div class="comparison-item">
+                    <div class="comparison-label">👤 Human Traffic</div>
+                    <div class="comparison-value">{human_vs_bot.get('human_percentage', 0)}%</div>
+                    <div class="comparison-subtitle">{human_vs_bot.get('human_requests', 0):,} requests</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">📊 Total Requests</div>
+                    <div class="comparison-value">{report.get('total_all_requests', 0):,}</div>
+                    <div class="comparison-subtitle">All traffic analyzed</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">🤖 AI Bot Traffic</div>
+                    <div class="comparison-value">{human_vs_bot.get('bot_percentage', 0)}%</div>
+                    <div class="comparison-subtitle">{human_vs_bot.get('bot_requests', 0):,} requests</div>
+                </div>
             </div>
         </div>
     """
@@ -256,6 +281,114 @@ def generate_bot_overview(report):
         """
     
     html += "</tbody></table></div>"
+    return html
+
+def generate_technical_metrics(report):
+    """Generate technical metrics section with status codes, bandwidth, etc."""
+    status_breakdown = report.get('status_breakdown', {})
+    bandwidth = report.get('bandwidth', {})
+    content_types = report.get('content_types', [])
+    request_methods = report.get('request_methods', [])
+
+    # Status code colors
+    status_colors = {
+        '2xx': '#48bb78',  # Green - Success
+        '3xx': '#ed8936',  # Orange - Redirect
+        '4xx': '#f56565',  # Red - Client Error
+        '5xx': '#9f7aea'   # Purple - Server Error
+    }
+
+    html = """
+    <div id="technical" class="section">
+        <div class="section-header"><h2 class="section-title"><span class="section-icon">📈</span>Technical Metrics</h2></div>
+
+        <!-- Status Code Breakdown -->
+        <h3 style="margin-bottom: 20px; color: #2d3748;">HTTP Response Status Codes</h3>
+        <div class="insights-grid">
+    """
+
+    for code_group in ['2xx', '3xx', '4xx', '5xx']:
+        data = status_breakdown.get(code_group, {'count': 0, 'percentage': 0})
+        color = status_colors.get(code_group, '#718096')
+        label_map = {
+            '2xx': '✅ Success (2xx)',
+            '3xx': '↩️ Redirects (3xx)',
+            '4xx': '❌ Client Errors (4xx)',
+            '5xx': '💥 Server Errors (5xx)'
+        }
+        html += f"""
+            <div class="insight-card" style="border-top-color: {color};">
+                <div class="insight-title">{label_map.get(code_group, code_group)}</div>
+                <div style="font-size: 2.5em; font-weight: 700; color: {color}; margin: 15px 0;">{data['percentage']}%</div>
+                <div style="color: #718096;">{data['count']:,} requests</div>
+                <div class="progress-bar" style="margin-top: 15px; height: 12px;">
+                    <div class="progress-fill" style="width: {data['percentage']}%; background: {color};"></div>
+                </div>
+            </div>
+        """
+
+    html += """
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-grid" style="margin-top: 30px;">
+            <div class="chart-container"><canvas id="statusCodeChart"></canvas></div>
+            <div class="chart-container"><canvas id="contentTypeChart"></canvas></div>
+        </div>
+
+        <!-- Request Methods & Bandwidth -->
+        <div class="insights-grid" style="margin-top: 30px;">
+            <div class="insight-card">
+                <div class="insight-title">📤 Request Methods</div>
+    """
+
+    for method_data in request_methods[:5]:
+        html += f"""
+                <div class="insight-stat">
+                    <span class="insight-label">{method_data['method']}</span>
+                    <span class="insight-value">{method_data['percentage']}% ({method_data['count']:,})</span>
+                </div>
+        """
+
+    html += """
+            </div>
+            <div class="insight-card">
+                <div class="insight-title">📦 Content Types Requested</div>
+    """
+
+    for ct_data in content_types[:5]:
+        html += f"""
+                <div class="insight-stat">
+                    <span class="insight-label">{ct_data['type']}</span>
+                    <span class="insight-value">{ct_data['percentage']}% ({ct_data['count']:,})</span>
+                </div>
+        """
+
+    # Bandwidth section
+    total_bandwidth = bandwidth.get('total_formatted', '0 B')
+    bot_bandwidth = bandwidth.get('by_bot', [])
+
+    html += f"""
+            </div>
+            <div class="insight-card">
+                <div class="insight-title">📊 Bandwidth Consumed</div>
+                <div style="font-size: 2em; font-weight: 700; color: #667eea; margin: 15px 0;">{total_bandwidth}</div>
+                <div style="color: #718096; margin-bottom: 15px;">Total data transferred to AI bots</div>
+    """
+
+    for bot_bw in bot_bandwidth[:3]:
+        html += f"""
+                <div class="insight-stat">
+                    <span class="insight-label">{bot_bw['type']}</span>
+                    <span class="insight-value">{bot_bw['formatted']}</span>
+                </div>
+        """
+
+    html += """
+            </div>
+        </div>
+    </div>
+    """
     return html
 
 def generate_patterns_section(report):
@@ -378,7 +511,23 @@ def generate_chart_scripts(report):
     bot_counts = [bot['count'] for bot in report['bot_statistics']]
     success_rates = [bot['success_rate'] for bot in report['bot_statistics']]
     bar_colors = ['#48bb78' if rate >= 80 else '#ed8936' if rate >= 50 else '#f56565' for rate in success_rates]
-    
+
+    # Status code data
+    status_breakdown = report.get('status_breakdown', {})
+    status_labels = ['2xx Success', '3xx Redirect', '4xx Client Error', '5xx Server Error']
+    status_counts = [
+        status_breakdown.get('2xx', {}).get('count', 0),
+        status_breakdown.get('3xx', {}).get('count', 0),
+        status_breakdown.get('4xx', {}).get('count', 0),
+        status_breakdown.get('5xx', {}).get('count', 0)
+    ]
+    status_colors = ['#48bb78', '#ed8936', '#f56565', '#9f7aea']
+
+    # Content type data
+    content_types = report.get('content_types', [])
+    content_labels = [ct['type'] for ct in content_types[:6]]
+    content_counts = [ct['count'] for ct in content_types[:6]]
+
     scripts = []
     scripts.append(f"""
         new Chart(document.getElementById('botDistributionChart'), {{
@@ -402,7 +551,7 @@ def generate_chart_scripts(report):
             }}
         }});
     """)
-    
+
     scripts.append(f"""
         new Chart(document.getElementById('botSuccessChart'), {{
             type: 'bar',
@@ -428,13 +577,66 @@ def generate_chart_scripts(report):
             }}
         }});
     """)
-    
+
+    # Status Code Chart
+    scripts.append(f"""
+        new Chart(document.getElementById('statusCodeChart'), {{
+            type: 'doughnut',
+            data: {{
+                labels: {status_labels},
+                datasets: [{{
+                    data: {status_counts},
+                    backgroundColor: {status_colors},
+                    borderWidth: 0
+                }}]
+            }},
+            options: {{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {{
+                    title: {{ display: true, text: 'HTTP Status Code Distribution', font: {{ size: 16, weight: 'bold' }} }},
+                    legend: {{ position: 'bottom', labels: {{ padding: 15, font: {{ size: 12 }} }} }}
+                }},
+                cutout: '55%'
+            }}
+        }});
+    """)
+
+    # Content Type Chart
+    scripts.append(f"""
+        new Chart(document.getElementById('contentTypeChart'), {{
+            type: 'bar',
+            data: {{
+                labels: {content_labels},
+                datasets: [{{
+                    label: 'Requests',
+                    data: {content_counts},
+                    backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#f56565'],
+                    borderRadius: 6
+                }}]
+            }},
+            options: {{
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {{
+                    x: {{ beginAtZero: true }}
+                }},
+                plugins: {{
+                    title: {{ display: true, text: 'Content Types Requested by Bots', font: {{ size: 16, weight: 'bold' }} }},
+                    legend: {{ display: false }}
+                }}
+            }}
+        }});
+    """)
+
     return '\n'.join(scripts)
 
 def generate_html_report(report, output_file='ai_bot_report.html', ignore_homepage_redirects=True):
     sections = []
     sections.append(generate_executive_summary(report))
     sections.append(generate_bot_overview(report))
+    sections.append(generate_technical_metrics(report))
     sections.append(generate_patterns_section(report))
     sections.append(generate_behavior_section(report))
     sections.append(generate_issues_section(report))

@@ -32,6 +32,8 @@ class AIBotAnalyzer:
     def reset(self):
         """Reset all counters and data structures."""
         self.total_requests = 0
+        self.total_all_requests = 0  # All requests including human
+        self.human_requests = 0  # Non-bot requests
         self.bot_requests: Dict[str, int] = defaultdict(int)
         self.bot_successes: Dict[str, int] = defaultdict(int)
         self.url_requests: Counter = Counter()
@@ -47,6 +49,12 @@ class AIBotAnalyzer:
         self.failure_details: List[Dict] = []
         self.url_failure_types: Dict[str, Counter] = defaultdict(Counter)
         self.bot_failure_types: Dict[str, Counter] = defaultdict(Counter)
+        # New metrics
+        self.total_bytes: int = 0  # Bandwidth tracking
+        self.bot_bytes: Dict[str, int] = defaultdict(int)
+        self.request_methods: Counter = Counter()  # GET, POST, HEAD, etc.
+        self.content_types: Counter = Counter()  # HTML, images, CSS, JS
+        self.status_code_groups: Dict[str, int] = {'2xx': 0, '3xx': 0, '4xx': 0, '5xx': 0}
 
     def analyze_file(
         self,
@@ -80,9 +88,13 @@ class AIBotAnalyzer:
                 if not parsed:
                     continue
 
+                # Count ALL requests for human vs bot ratio
+                self.total_all_requests += 1
+
                 # Check if it's a bot
                 bot_type = self.detector.identify(parsed['user_agent'])
                 if not bot_type:
+                    self.human_requests += 1
                     continue
 
                 # Update date range
@@ -115,6 +127,48 @@ class AIBotAnalyzer:
                 self.url_requests[parsed['url']] += 1
                 self.status_codes[parsed['status']] += 1
                 self.bot_status_codes[bot_type][parsed['status']] += 1
+
+                # Track status code groups
+                status = parsed['status']
+                if 200 <= status < 300:
+                    self.status_code_groups['2xx'] += 1
+                elif 300 <= status < 400:
+                    self.status_code_groups['3xx'] += 1
+                elif 400 <= status < 500:
+                    self.status_code_groups['4xx'] += 1
+                elif 500 <= status < 600:
+                    self.status_code_groups['5xx'] += 1
+
+                # Track request methods
+                self.request_methods[parsed['method']] += 1
+
+                # Track bandwidth (if available in parsed data)
+                if 'bytes' in parsed and parsed['bytes']:
+                    try:
+                        bytes_sent = int(parsed['bytes']) if parsed['bytes'] != '-' else 0
+                        self.total_bytes += bytes_sent
+                        self.bot_bytes[bot_type] += bytes_sent
+                    except (ValueError, TypeError):
+                        pass
+
+                # Track content types based on URL extension
+                url = parsed['url'].split('?')[0].lower()
+                if url.endswith(('.html', '.htm', '/')):
+                    self.content_types['HTML'] += 1
+                elif url.endswith(('.css',)):
+                    self.content_types['CSS'] += 1
+                elif url.endswith(('.js',)):
+                    self.content_types['JavaScript'] += 1
+                elif url.endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.ico')):
+                    self.content_types['Images'] += 1
+                elif url.endswith(('.json',)):
+                    self.content_types['JSON/API'] += 1
+                elif url.endswith(('.xml', '.rss', '.atom')):
+                    self.content_types['XML/Feeds'] += 1
+                elif url.endswith(('.pdf', '.doc', '.docx')):
+                    self.content_types['Documents'] += 1
+                else:
+                    self.content_types['Other'] += 1
 
                 # Determine success
                 is_success = self._is_success(parsed['status'])
@@ -227,12 +281,55 @@ class AIBotAnalyzer:
             self.url_failures
         )
 
+        # Calculate human vs bot ratio
+        bot_percentage = (self.total_requests / self.total_all_requests * 100) if self.total_all_requests > 0 else 0
+        human_percentage = 100 - bot_percentage
+
+        # Status code breakdown with percentages
+        status_breakdown = {}
+        for group, count in self.status_code_groups.items():
+            percentage = (count / self.total_requests * 100) if self.total_requests > 0 else 0
+            status_breakdown[group] = {'count': count, 'percentage': round(percentage, 1)}
+
+        # Format bandwidth
+        def format_bytes(bytes_val):
+            if bytes_val >= 1024 * 1024 * 1024:
+                return f"{bytes_val / (1024*1024*1024):.2f} GB"
+            elif bytes_val >= 1024 * 1024:
+                return f"{bytes_val / (1024*1024):.2f} MB"
+            elif bytes_val >= 1024:
+                return f"{bytes_val / 1024:.2f} KB"
+            return f"{bytes_val} B"
+
+        # Bot bandwidth stats
+        bot_bandwidth = []
+        for bot_type, bytes_val in sorted(self.bot_bytes.items(), key=lambda x: x[1], reverse=True):
+            bot_bandwidth.append({
+                'type': bot_type,
+                'bytes': bytes_val,
+                'formatted': format_bytes(bytes_val)
+            })
+
+        # Content types with percentages
+        content_breakdown = []
+        for ctype, count in self.content_types.most_common():
+            percentage = (count / self.total_requests * 100) if self.total_requests > 0 else 0
+            content_breakdown.append({'type': ctype, 'count': count, 'percentage': round(percentage, 1)})
+
+        # Request methods with percentages
+        method_breakdown = []
+        for method, count in self.request_methods.most_common():
+            percentage = (count / self.total_requests * 100) if self.total_requests > 0 else 0
+            method_breakdown.append({'method': method, 'count': count, 'percentage': round(percentage, 1)})
+
         return {
             'date_range': {
                 'start': self.date_range['min'].strftime('%Y-%m-%d') if self.date_range['min'] else 'N/A',
                 'end': self.date_range['max'].strftime('%Y-%m-%d') if self.date_range['max'] else 'N/A',
             },
             'total_requests': self.total_requests,
+            'total_all_requests': self.total_all_requests,
+            'human_requests': self.human_requests,
             'overall_success_rate': overall_success_rate,
             'bot_statistics': bot_stats,
             'top_urls': top_urls,
@@ -242,7 +339,22 @@ class AIBotAnalyzer:
             'behavior_analysis': behavior_analysis,
             'failure_analysis': failure_analysis,
             'recommendations': recommendations,
-            'comparisons': comparisons
+            'comparisons': comparisons,
+            # New metrics
+            'human_vs_bot': {
+                'human_requests': self.human_requests,
+                'bot_requests': self.total_requests,
+                'human_percentage': round(human_percentage, 1),
+                'bot_percentage': round(bot_percentage, 1)
+            },
+            'status_breakdown': status_breakdown,
+            'bandwidth': {
+                'total_bytes': self.total_bytes,
+                'total_formatted': format_bytes(self.total_bytes),
+                'by_bot': bot_bandwidth
+            },
+            'content_types': content_breakdown,
+            'request_methods': method_breakdown
         }
 
     def _is_success(self, status_code: int) -> bool:
