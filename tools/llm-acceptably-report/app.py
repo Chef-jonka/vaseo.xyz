@@ -27,8 +27,7 @@ from report_generators.html_generator import generate_html_report
 # Check if PostgreSQL is available
 DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL:
-    import psycopg2
-    from psycopg2.extras import RealDictCursor
+    import psycopg
     USE_POSTGRES = True
 else:
     USE_POSTGRES = False
@@ -57,7 +56,7 @@ def get_db():
         db_url = DATABASE_URL
         if db_url.startswith('postgres://'):
             db_url = db_url.replace('postgres://', 'postgresql://', 1)
-        conn = psycopg2.connect(db_url)
+        conn = psycopg.connect(db_url)
         return conn
     else:
         conn = sqlite3.connect(app.config['DATABASE'])
