@@ -34,21 +34,99 @@
                 {% endif %}
             {% endwith %}
 
-            <h1 class="page-title">Welcome, {{ username }}!</h1>
-            <p class="page-subtitle">Your AI Bot Traffic Reports</p>
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h1 class="page-title">
+                    Welcome{% if company_name %}, {{ company_name }}{% else %}, {{ username }}{% endif %}!
+                </h1>
+                <p class="page-subtitle">Your AI Bot Traffic Reports Dashboard</p>
+            </div>
+
+            <!-- Quick Stats -->
+            {% if stats.total_reports > 0 %}
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">&#128202;</div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ stats.total_reports }}</div>
+                        <div class="stat-label">Total Reports</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">&#128197;</div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ stats.last_report_date or 'N/A' }}</div>
+                        <div class="stat-label">Latest Report</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        {% if stats.latest_health == 'excellent' %}&#9989;
+                        {% elif stats.latest_health == 'warning' %}&#9888;
+                        {% elif stats.latest_health == 'critical' %}&#10060;
+                        {% else %}&#8212;{% endif %}
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value health-{{ stats.latest_health or 'unknown' }}">
+                            {% if stats.latest_health == 'excellent' %}Excellent
+                            {% elif stats.latest_health == 'warning' %}Good
+                            {% elif stats.latest_health == 'critical' %}Needs Attention
+                            {% else %}N/A{% endif %}
+                        </div>
+                        <div class="stat-label">Latest Health Status</div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Search/Filter (only if multiple reports) -->
+            {% if reports|length > 3 %}
+            <div class="search-bar">
+                <input type="text" id="reportSearch" class="form-input" placeholder="Search reports..." onkeyup="filterReports()">
+            </div>
+            {% endif %}
 
             {% if reports %}
-                <div class="reports-grid">
+                <div class="reports-grid" id="reportsGrid">
                     {% for report in reports %}
-                        <div class="report-card">
-                            <div class="report-icon">
-                                <span>&#128202;</span>
+                        <div class="report-card" data-name="{{ report.name|lower }}">
+                            <!-- Health Status Indicator -->
+                            {% if report.summary %}
+                            <div class="report-health health-{{ report.summary.health_status or 'unknown' }}">
+                                {% if report.summary.health_status == 'excellent' %}&#9989; Excellent
+                                {% elif report.summary.health_status == 'warning' %}&#9888; Good
+                                {% elif report.summary.health_status == 'critical' %}&#10060; Needs Attention
+                                {% else %}&#8212;{% endif %}
                             </div>
+                            {% endif %}
+
                             <h3 class="report-name">{{ report.name }}</h3>
-                            <p class="report-meta">
-                                File: {{ report.filename }}<br>
-                                Size: {{ (report.size / 1024)|round(1) }} KB
-                            </p>
+                            <p class="report-date">{{ report.modified_formatted }}</p>
+
+                            <!-- Report Preview/Summary -->
+                            {% if report.summary %}
+                            <div class="report-summary">
+                                {% if report.summary.total_requests %}
+                                <div class="summary-item">
+                                    <span class="summary-label">AI Requests</span>
+                                    <span class="summary-value">{{ report.summary.total_requests }}</span>
+                                </div>
+                                {% endif %}
+                                {% if report.summary.success_rate %}
+                                <div class="summary-item">
+                                    <span class="summary-label">Success Rate</span>
+                                    <span class="summary-value">{{ report.summary.success_rate }}%</span>
+                                </div>
+                                {% endif %}
+                                {% if report.summary.top_bot %}
+                                <div class="summary-item">
+                                    <span class="summary-label">Top Bot</span>
+                                    <span class="summary-value">{{ report.summary.top_bot }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+
                             <div class="report-actions">
                                 <a href="{{ url_for('view_report', client_id=client_id, report_filename=report.filename) }}"
                                    class="btn btn-primary btn-small"
@@ -63,6 +141,30 @@
                         </div>
                     {% endfor %}
                 </div>
+
+                <!-- Compare Reports (if 2+ reports) -->
+                {% if reports|length >= 2 %}
+                <div class="compare-section">
+                    <h3>Compare Reports</h3>
+                    <p class="compare-hint">See how your AI bot traffic has changed over time</p>
+                    <div class="compare-selector">
+                        <select id="compareReport1" class="form-input">
+                            {% for report in reports %}
+                            <option value="{{ loop.index0 }}" {% if loop.index == 1 %}selected{% endif %}>{{ report.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="compare-vs">vs</span>
+                        <select id="compareReport2" class="form-input">
+                            {% for report in reports %}
+                            <option value="{{ loop.index0 }}" {% if loop.index == 2 %}selected{% endif %}>{{ report.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-secondary" onclick="compareReports()">Compare</button>
+                    </div>
+                    <div id="compareResults" class="compare-results" style="display: none;"></div>
+                </div>
+                {% endif %}
+
             {% else %}
                 <div class="empty-state">
                     <div class="empty-icon">&#128203;</div>
@@ -81,5 +183,103 @@
             <p>&copy; 2025 Vaseo. All rights reserved. | <a href="https://vaseo.xyz" target="_blank">vaseo.xyz</a></p>
         </div>
     </footer>
+
+    <script>
+        // Search/Filter reports
+        function filterReports() {
+            const searchTerm = document.getElementById('reportSearch').value.toLowerCase();
+            const cards = document.querySelectorAll('.report-card');
+
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                if (name.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Compare reports
+        const reportsData = [
+            {% for report in reports %}
+            {
+                name: "{{ report.name }}",
+                summary: {{ report.summary|tojson if report.summary else 'null' }}
+            }{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        function compareReports() {
+            const idx1 = parseInt(document.getElementById('compareReport1').value);
+            const idx2 = parseInt(document.getElementById('compareReport2').value);
+
+            if (idx1 === idx2) {
+                alert('Please select two different reports to compare.');
+                return;
+            }
+
+            const report1 = reportsData[idx1];
+            const report2 = reportsData[idx2];
+
+            if (!report1.summary || !report2.summary) {
+                alert('Summary data not available for one or both reports.');
+                return;
+            }
+
+            const resultsDiv = document.getElementById('compareResults');
+
+            let html = '<div class="compare-grid">';
+
+            // Compare success rates
+            if (report1.summary.success_rate && report2.summary.success_rate) {
+                const rate1 = parseFloat(report1.summary.success_rate);
+                const rate2 = parseFloat(report2.summary.success_rate);
+                const diff = rate1 - rate2;
+                const trend = diff > 0 ? 'up' : diff < 0 ? 'down' : 'same';
+
+                html += `
+                    <div class="compare-item">
+                        <div class="compare-label">Success Rate</div>
+                        <div class="compare-values">
+                            <span>${report1.name}: <strong>${rate1}%</strong></span>
+                            <span class="compare-arrow ${trend}">${trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→'}</span>
+                            <span>${report2.name}: <strong>${rate2}%</strong></span>
+                        </div>
+                        <div class="compare-diff ${trend}">
+                            ${diff > 0 ? '+' : ''}${diff.toFixed(1)}% change
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Compare total requests
+            if (report1.summary.total_requests && report2.summary.total_requests) {
+                const req1 = parseInt(report1.summary.total_requests.replace(/,/g, ''));
+                const req2 = parseInt(report2.summary.total_requests.replace(/,/g, ''));
+                const diff = req1 - req2;
+                const trend = diff > 0 ? 'up' : diff < 0 ? 'down' : 'same';
+
+                html += `
+                    <div class="compare-item">
+                        <div class="compare-label">Total AI Requests</div>
+                        <div class="compare-values">
+                            <span>${report1.name}: <strong>${report1.summary.total_requests}</strong></span>
+                            <span class="compare-arrow ${trend}">${trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→'}</span>
+                            <span>${report2.name}: <strong>${report2.summary.total_requests}</strong></span>
+                        </div>
+                        <div class="compare-diff ${trend}">
+                            ${diff > 0 ? '+' : ''}${diff.toLocaleString()} requests
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+
+            resultsDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+        }
+    </script>
 </body>
 </html>

@@ -20,6 +20,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         .nav-container {{ max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 30px; padding: 15px 0; }}
         .nav-back {{ color: #667eea; text-decoration: none; font-size: 0.9em; font-weight: 500; padding: 8px 16px; border-radius: 6px; transition: all 0.2s; }}
         .nav-back:hover {{ background: #f7fafc; }}
+        .nav-actions {{ display: flex; gap: 10px; }}
+        .btn-print {{ background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em; font-weight: 500; transition: all 0.2s; }}
+        .btn-print:hover {{ background: #5a67d8; }}
+        @media print {{
+            .nav, .footer {{ display: none !important; }}
+            .container {{ max-width: 100%; padding: 0; }}
+            .section {{ break-inside: avoid; box-shadow: none; border: 1px solid #e2e8f0; }}
+            body {{ background: white; }}
+        }}
         .nav-logo {{ font-size: 1.3em; font-weight: 700; color: #667eea; }}
         .nav-links {{ display: flex; gap: 5px; flex: 1; }}
         .nav-link {{ padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 0.9em; color: #4a5568; text-decoration: none; }}
@@ -110,6 +119,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 <a href="#behavior" class="nav-link">Behavior</a>
                 <a href="#issues" class="nav-link">Issues</a>
                 <a href="#actions" class="nav-link">Actions</a>
+            </div>
+            <div class="nav-actions">
+                <button class="btn-print" onclick="window.print()">📄 Save as PDF</button>
             </div>
         </div>
     </nav>
