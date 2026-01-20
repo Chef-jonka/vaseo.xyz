@@ -57,12 +57,49 @@ DEFAULT_BOT_PATTERNS: List[BotPattern] = [
 ]
 
 
+# Known bot IP ranges (for optional IP-based detection)
+KNOWN_BOT_IP_RANGES: Dict[str, List[str]] = {
+    "Googlebot": [
+        "66.249.64.0/19",
+        "64.233.160.0/19",
+        "72.14.192.0/18",
+        "209.85.128.0/17",
+    ],
+    "Bingbot": [
+        "157.55.39.0/24",
+        "207.46.13.0/24",
+        "40.77.167.0/24",
+    ],
+    "OpenAI": [
+        "20.171.207.0/24",  # Example - verify current ranges
+    ],
+}
+
+
+@dataclass
+class FeatureToggles:
+    """Feature toggles for optional functionality."""
+    enable_referrer_analysis: bool = True
+    enable_site_structure: bool = True
+    enable_crawl_efficiency: bool = True
+    enable_compliance_tracking: bool = True
+    enable_query_params: bool = True
+    enable_anomaly_detection: bool = True
+    enable_bot_versions: bool = True
+    enable_seo_health: bool = True
+    enable_competitive_analysis: bool = True
+    enable_geographic_analysis: bool = False  # Requires geoip2
+
+
 @dataclass
 class Config:
     """Main configuration class for the analyzer."""
 
     # Bot detection patterns (as dict for easy lookup)
     bot_patterns: Dict[str, List[str]] = field(default_factory=dict)
+
+    # Feature toggles
+    features: FeatureToggles = field(default_factory=FeatureToggles)
 
     # Success status codes
     success_codes: List[int] = field(default_factory=lambda: list(range(200, 300)))

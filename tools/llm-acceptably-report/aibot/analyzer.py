@@ -7,6 +7,8 @@ Core analysis engine for processing web server logs and generating reports.
 from collections import defaultdict, Counter
 from pathlib import Path
 from typing import Dict, List, Optional, Callable, Any
+from urllib.parse import urlparse, parse_qs
+import re
 
 from .config import get_config, Config
 from .parsers import LogParser
@@ -55,6 +57,37 @@ class AIBotAnalyzer:
         self.request_methods: Counter = Counter()  # GET, POST, HEAD, etc.
         self.content_types: Counter = Counter()  # HTML, images, CSS, JS
         self.status_code_groups: Dict[str, int] = {'2xx': 0, '3xx': 0, '4xx': 0, '5xx': 0}
+
+        # NEW: Referrer tracking
+        self.referrer_sources: Counter = Counter()  # direct/search/external
+        self.referrer_domains: Counter = Counter()
+        self.bot_referrer_sources: Dict[str, Counter] = defaultdict(Counter)
+
+        # NEW: Site structure
+        self.section_hits: Counter = Counter()  # /blog/, /products/
+        self.crawl_depth: Counter = Counter()  # 0, 1, 2, 3+
+        self.bot_section_preferences: Dict[str, Counter] = defaultdict(Counter)
+
+        # NEW: Compliance tracking
+        self.robots_txt_accesses: Dict[str, int] = defaultdict(int)
+        self.sitemap_accesses: Dict[str, int] = defaultdict(int)
+
+        # NEW: Query params
+        self.url_params: Counter = Counter()
+        self.param_urls: Counter = Counter()
+
+        # NEW: Bot versions
+        self.bot_versions: Dict[str, Counter] = defaultdict(Counter)
+
+        # NEW: Anomaly detection
+        self.daily_request_counts: Dict[str, int] = defaultdict(int)
+
+        # NEW: SEO metrics
+        self.indexable_pages: int = 0
+        self.non_indexable_pages: int = 0
+
+        # NEW: Geographic (optional)
+        self.ip_countries: Counter = Counter()
 
     def analyze_file(
         self,
@@ -170,6 +203,51 @@ class AIBotAnalyzer:
                 else:
                     self.content_types['Other'] += 1
 
+                # NEW: Referrer analysis
+                referrer = parsed.get('referrer', '-')
+                ref_category = self._categorize_referrer(referrer)
+                self.referrer_sources[ref_category] += 1
+                self.bot_referrer_sources[bot_type][ref_category] += 1
+                if ref_category == 'external':
+                    ref_domain = self._extract_domain(referrer)
+                    if ref_domain:
+                        self.referrer_domains[ref_domain] += 1
+
+                # NEW: Site structure analysis
+                section = self._extract_section(parsed['url'])
+                self.section_hits[section] += 1
+                self.bot_section_preferences[bot_type][section] += 1
+                depth = self._calculate_depth(parsed['url'])
+                self.crawl_depth[depth] += 1
+
+                # NEW: Compliance tracking (robots.txt & sitemap)
+                url_path = parsed['url'].lower()
+                if 'robots.txt' in url_path:
+                    self.robots_txt_accesses[bot_type] += 1
+                if 'sitemap' in url_path and url_path.endswith('.xml'):
+                    self.sitemap_accesses[bot_type] += 1
+
+                # NEW: Query parameter tracking
+                if '?' in parsed['url']:
+                    params = self._extract_params(parsed['url'])
+                    for param in params:
+                        self.url_params[param] += 1
+                    self.param_urls[parsed['url'].split('?')[0]] += 1
+
+                # NEW: Bot version tracking
+                version = self._extract_bot_version(parsed['user_agent'])
+                self.bot_versions[bot_type][version] += 1
+
+                # NEW: Daily counts for anomaly detection
+                day_str = ts.strftime('%Y-%m-%d')
+                self.daily_request_counts[day_str] += 1
+
+                # NEW: SEO indexability
+                if 200 <= parsed['status'] < 300:
+                    self.indexable_pages += 1
+                else:
+                    self.non_indexable_pages += 1
+
                 # Determine success
                 is_success = self._is_success(parsed['status'])
 
@@ -281,6 +359,56 @@ class AIBotAnalyzer:
             self.url_failures
         )
 
+        # NEW: Generate new insight analyses
+        referrer_analysis = self.insights.analyze_referrers(
+            dict(self.referrer_sources),
+            dict(self.referrer_domains),
+            {k: dict(v) for k, v in self.bot_referrer_sources.items()}
+        )
+
+        site_structure = self.insights.analyze_site_structure(
+            dict(self.section_hits),
+            dict(self.crawl_depth),
+            {k: dict(v) for k, v in self.bot_section_preferences.items()}
+        )
+
+        crawl_efficiency = self.insights.analyze_crawl_efficiency(
+            dict(self.content_types),
+            self.total_requests
+        )
+
+        compliance = self.insights.analyze_compliance(
+            dict(self.robots_txt_accesses),
+            dict(self.sitemap_accesses),
+            list(self.bot_requests.keys())
+        )
+
+        query_params = self.insights.analyze_query_params(
+            dict(self.url_params),
+            dict(self.param_urls),
+            self.total_requests
+        )
+
+        anomalies = self.insights.detect_anomalies(
+            dict(self.daily_request_counts)
+        )
+
+        bot_versions = self.insights.analyze_bot_versions(
+            {k: dict(v) for k, v in self.bot_versions.items()}
+        )
+
+        seo_health = self.insights.calculate_seo_health(
+            self.indexable_pages,
+            self.non_indexable_pages,
+            dict(self.status_codes)
+        )
+
+        competitive = self.insights.compare_bot_aggression(
+            dict(self.bot_requests),
+            {k: dict(v) for k, v in self.bot_section_preferences.items()},
+            dict(self.bot_bytes)
+        )
+
         # Calculate human vs bot ratio
         bot_percentage = (self.total_requests / self.total_all_requests * 100) if self.total_all_requests > 0 else 0
         human_percentage = 100 - bot_percentage
@@ -354,7 +482,17 @@ class AIBotAnalyzer:
                 'by_bot': bot_bandwidth
             },
             'content_types': content_breakdown,
-            'request_methods': method_breakdown
+            'request_methods': method_breakdown,
+            # NEW: Additional analysis data
+            'referrer_analysis': referrer_analysis,
+            'site_structure': site_structure,
+            'crawl_efficiency': crawl_efficiency,
+            'compliance': compliance,
+            'query_params': query_params,
+            'anomalies': anomalies,
+            'bot_versions': bot_versions,
+            'seo_health': seo_health,
+            'competitive': competitive
         }
 
     def _is_success(self, status_code: int) -> bool:
@@ -376,3 +514,92 @@ class AIBotAnalyzer:
         elif 500 <= status_code < 600:
             return f"{status_code} Server Error"
         return f"Unknown ({status_code})"
+
+    def _categorize_referrer(self, referrer: str) -> str:
+        """Categorize referrer as direct, search, or external."""
+        if not referrer or referrer == '-' or referrer == '':
+            return 'direct'
+
+        referrer_lower = referrer.lower()
+        search_engines = ['google', 'bing', 'yahoo', 'duckduckgo', 'baidu', 'yandex']
+        for engine in search_engines:
+            if engine in referrer_lower:
+                return 'search'
+
+        return 'external'
+
+    def _extract_domain(self, url: str) -> Optional[str]:
+        """Extract domain from URL."""
+        try:
+            parsed = urlparse(url)
+            return parsed.netloc if parsed.netloc else None
+        except Exception:
+            return None
+
+    def _extract_section(self, url: str) -> str:
+        """Extract the site section from URL."""
+        path = url.split('?')[0]
+        if path == '/' or path == '':
+            return 'homepage'
+
+        parts = [p for p in path.split('/') if p]
+        if not parts:
+            return 'homepage'
+
+        first_part = parts[0].lower()
+        common_sections = ['blog', 'products', 'services', 'about', 'contact',
+                          'news', 'articles', 'category', 'categories', 'tag',
+                          'tags', 'shop', 'store', 'docs', 'documentation',
+                          'api', 'help', 'support', 'faq', 'pricing']
+
+        if first_part in common_sections:
+            return f'/{first_part}/'
+
+        # Check for asset directories
+        asset_patterns = ['wp-content', 'static', 'assets', 'images', 'img',
+                         'css', 'js', 'fonts', 'media']
+        if first_part in asset_patterns:
+            return '/assets/'
+
+        return f'/{first_part}/'
+
+    def _calculate_depth(self, url: str) -> int:
+        """Calculate crawl depth from URL."""
+        path = url.split('?')[0]
+        parts = [p for p in path.split('/') if p]
+        depth = len(parts)
+        return min(depth, 5)  # Cap at 5 for grouping
+
+    def _extract_params(self, url: str) -> List[str]:
+        """Extract query parameter names from URL."""
+        try:
+            if '?' not in url:
+                return []
+            query_string = url.split('?', 1)[1]
+            params = parse_qs(query_string)
+            return list(params.keys())
+        except Exception:
+            return []
+
+    def _extract_bot_version(self, user_agent: str) -> str:
+        """Extract bot version from user agent string."""
+        if not user_agent:
+            return 'unknown'
+
+        # Common version patterns
+        version_patterns = [
+            r'GPTBot/(\d+\.?\d*)',
+            r'ClaudeBot/(\d+\.?\d*)',
+            r'Googlebot/(\d+\.?\d*)',
+            r'bingbot/(\d+\.?\d*)',
+            r'PerplexityBot/(\d+\.?\d*)',
+            r'anthropic-ai/(\d+\.?\d*)',
+            r'/(\d+\.\d+)',  # Generic version pattern
+        ]
+
+        for pattern in version_patterns:
+            match = re.search(pattern, user_agent, re.IGNORECASE)
+            if match:
+                return match.group(1)
+
+        return 'unknown'
