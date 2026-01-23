@@ -4,212 +4,556 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | LLM Acceptably Report</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; }
+
+        /* Header */
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header-content { max-width: 1400px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; font-weight: 700; font-size: 1.2em; }
+        .logo-icon { font-size: 1.5em; }
+        .user-info { display: flex; align-items: center; gap: 15px; color: rgba(255,255,255,0.9); }
+        .btn { padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 0.9em; transition: all 0.2s; border: none; cursor: pointer; }
+        .btn-light { background: rgba(255,255,255,0.2); color: white; }
+        .btn-light:hover { background: rgba(255,255,255,0.3); }
+        .btn-primary { background: white; color: #667eea; }
+        .btn-primary:hover { background: #f0f0f0; transform: translateY(-1px); }
+        .btn-secondary { background: #f0f2f5; color: #4a5568; }
+        .btn-secondary:hover { background: #e2e8f0; }
+        .btn-success { background: #48bb78; color: white; }
+        .btn-small { padding: 6px 12px; font-size: 0.85em; }
+
+        /* Main Container */
+        .main { max-width: 1400px; margin: 0 auto; padding: 30px 20px; }
+
+        /* Alert Messages */
+        .alert { padding: 15px 20px; border-radius: 10px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .alert-success { background: #c6f6d5; color: #276749; }
+        .alert-error { background: #fed7d7; color: #c53030; }
+
+        /* Welcome Section */
+        .welcome-section { margin-bottom: 30px; }
+        .welcome-section h1 { font-size: 2em; color: #1a1a2e; margin-bottom: 5px; }
+        .welcome-section p { color: #718096; font-size: 1.1em; }
+
+        /* Stats Overview */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; border-radius: 16px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: all 0.3s; position: relative; overflow: hidden; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #667eea, #764ba2); }
+        .stat-icon { font-size: 2.5em; margin-bottom: 15px; }
+        .stat-value { font-size: 2em; font-weight: 700; color: #1a1a2e; }
+        .stat-label { color: #718096; font-size: 0.9em; margin-top: 5px; }
+        .stat-trend { font-size: 0.85em; margin-top: 10px; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+        .stat-trend.up { background: #c6f6d5; color: #276749; }
+        .stat-trend.down { background: #fed7d7; color: #c53030; }
+
+        /* Trend Chart */
+        .trend-section { background: white; border-radius: 16px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .trend-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .trend-title { font-size: 1.3em; font-weight: 600; color: #1a1a2e; }
+        .chart-container { height: 200px; }
+
+        /* Controls Bar */
+        .controls-bar { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between; }
+        .controls-left { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+        .controls-right { display: flex; gap: 10px; align-items: center; }
+
+        .search-box { position: relative; }
+        .search-box input { padding: 10px 15px 10px 40px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95em; width: 250px; transition: all 0.2s; }
+        .search-box input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .search-box::before { content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 1em; }
+
+        .filter-dropdown { padding: 10px 15px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95em; background: white; cursor: pointer; transition: all 0.2s; }
+        .filter-dropdown:focus { outline: none; border-color: #667eea; }
+
+        .view-toggle { display: flex; background: #f0f2f5; border-radius: 10px; padding: 4px; }
+        .view-btn { padding: 8px 15px; border: none; background: none; cursor: pointer; border-radius: 8px; font-size: 1.1em; transition: all 0.2s; }
+        .view-btn.active { background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        /* Reports Grid View */
+        .reports-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .report-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: all 0.3s; position: relative; }
+        .report-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.12); }
+
+        .report-card-header { padding: 20px 20px 15px; border-bottom: 1px solid #f0f2f5; }
+        .report-health-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 0.8em; font-weight: 600; margin-bottom: 12px; }
+        .report-health-badge.excellent { background: #c6f6d5; color: #276749; }
+        .report-health-badge.warning { background: #fef3c7; color: #92400e; }
+        .report-health-badge.critical { background: #fed7d7; color: #c53030; }
+        .report-health-badge.unknown { background: #e2e8f0; color: #4a5568; }
+
+        .report-name { font-size: 1.15em; font-weight: 600; color: #1a1a2e; margin-bottom: 5px; line-height: 1.3; }
+        .report-date { color: #718096; font-size: 0.85em; display: flex; align-items: center; gap: 5px; }
+
+        .report-card-body { padding: 15px 20px; }
+        .report-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .report-metric { background: #f7fafc; padding: 12px; border-radius: 10px; }
+        .report-metric-value { font-size: 1.3em; font-weight: 700; color: #1a1a2e; }
+        .report-metric-label { font-size: 0.75em; color: #718096; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px; }
+
+        .report-card-footer { padding: 15px 20px; background: #f7fafc; display: flex; gap: 10px; }
+        .report-card-footer .btn { flex: 1; text-align: center; }
+
+        /* Reports Table View */
+        .reports-table-container { display: none; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .reports-table { width: 100%; border-collapse: collapse; }
+        .reports-table th { background: #f7fafc; padding: 15px 20px; text-align: left; font-weight: 600; color: #4a5568; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0; }
+        .reports-table td { padding: 15px 20px; border-bottom: 1px solid #f0f2f5; }
+        .reports-table tr:hover { background: #f7fafc; }
+        .reports-table .report-name-cell { font-weight: 600; color: #1a1a2e; }
+        .table-health-badge { padding: 4px 10px; border-radius: 15px; font-size: 0.8em; font-weight: 600; }
+        .table-actions { display: flex; gap: 8px; }
+
+        /* Timeline View */
+        .timeline-container { display: none; }
+        .timeline { position: relative; padding-left: 30px; }
+        .timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, #667eea, #764ba2); border-radius: 3px; }
+        .timeline-item { position: relative; margin-bottom: 25px; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-left: 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -27px; top: 25px; width: 14px; height: 14px; background: white; border: 3px solid #667eea; border-radius: 50%; }
+        .timeline-date { font-size: 0.85em; color: #718096; margin-bottom: 8px; }
+        .timeline-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .timeline-info h4 { font-size: 1.1em; color: #1a1a2e; margin-bottom: 5px; }
+        .timeline-stats { display: flex; gap: 20px; }
+        .timeline-stat { text-align: center; }
+        .timeline-stat-value { font-size: 1.2em; font-weight: 700; color: #667eea; }
+        .timeline-stat-label { font-size: 0.75em; color: #718096; }
+
+        /* Compare Section */
+        .compare-section { background: white; border-radius: 16px; padding: 25px; margin-top: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .compare-title { font-size: 1.3em; font-weight: 600; color: #1a1a2e; }
+        .compare-selector { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+        .compare-vs { color: #718096; font-weight: 600; }
+        .compare-results { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
+        .compare-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .compare-item { background: #f7fafc; padding: 20px; border-radius: 12px; }
+        .compare-label { font-weight: 600; color: #1a1a2e; margin-bottom: 15px; }
+        .compare-values { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .compare-arrow { font-size: 1.5em; }
+        .compare-arrow.up { color: #48bb78; }
+        .compare-arrow.down { color: #f56565; }
+        .compare-arrow.same { color: #718096; }
+        .compare-diff { font-size: 0.9em; font-weight: 600; padding: 5px 12px; border-radius: 20px; display: inline-block; }
+        .compare-diff.up { background: #c6f6d5; color: #276749; }
+        .compare-diff.down { background: #fed7d7; color: #c53030; }
+        .compare-diff.same { background: #e2e8f0; color: #4a5568; }
+
+        /* Empty State */
+        .empty-state { text-align: center; padding: 80px 20px; background: white; border-radius: 16px; }
+        .empty-icon { font-size: 4em; margin-bottom: 20px; opacity: 0.5; }
+        .empty-title { font-size: 1.5em; color: #1a1a2e; margin-bottom: 10px; }
+        .empty-text { color: #718096; max-width: 400px; margin: 0 auto; line-height: 1.6; }
+
+        /* Footer */
+        .footer { text-align: center; padding: 30px 20px; color: #718096; font-size: 0.9em; }
+        .footer a { color: #667eea; text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+
+        /* Health Colors */
+        .health-excellent { color: #276749; }
+        .health-warning { color: #92400e; }
+        .health-critical { color: #c53030; }
+        .health-unknown { color: #4a5568; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .report-card, .timeline-item { animation: fadeIn 0.3s ease-out; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .controls-bar { flex-direction: column; align-items: stretch; }
+            .controls-left, .controls-right { justify-content: center; }
+            .search-box input { width: 100%; }
+            .reports-grid { grid-template-columns: 1fr; }
+            .compare-selector { flex-direction: column; }
+            .stat-card { padding: 20px; }
+        }
+    </style>
 </head>
 <body>
     <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="{{ url_for('dashboard') }}" class="logo">
-                    <div class="logo-icon">&#129302;</div>
-                    LLM Acceptably Report
-                </a>
-                <div class="user-info">
-                    <span class="user-name">Logged in as <strong>{{ username }}</strong></span>
-                    <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-small">Logout</a>
-                </div>
+        <div class="header-content">
+            <a href="{{ url_for('dashboard') }}" class="logo">
+                <span class="logo-icon">🤖</span>
+                LLM Acceptably Report
+            </a>
+            <div class="user-info">
+                <span>{{ username }}</span>
+                <a href="{{ url_for('logout') }}" class="btn btn-light btn-small">Logout</a>
             </div>
         </div>
     </header>
 
-    <main class="dashboard">
-        <div class="container">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ 'error' if category == 'error' else 'success' }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-
-            <!-- Welcome Section -->
-            <div class="welcome-section">
-                <h1 class="page-title">
-                    Welcome{% if company_name %}, {{ company_name }}{% else %}, {{ username }}{% endif %}!
-                </h1>
-                <p class="page-subtitle">Your AI Bot Traffic Reports Dashboard</p>
-            </div>
-
-            <!-- Quick Stats -->
-            {% if stats.total_reports > 0 %}
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">&#128202;</div>
-                    <div class="stat-content">
-                        <div class="stat-value">{{ stats.total_reports }}</div>
-                        <div class="stat-label">Total Reports</div>
+    <main class="main">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'error' if category == 'error' else 'success' }}">
+                        {{ message }}
                     </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">&#128197;</div>
-                    <div class="stat-content">
-                        <div class="stat-value">{{ stats.last_report_date or 'N/A' }}</div>
-                        <div class="stat-label">Latest Report</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        {% if stats.latest_health == 'excellent' %}&#9989;
-                        {% elif stats.latest_health == 'warning' %}&#9888;
-                        {% elif stats.latest_health == 'critical' %}&#10060;
-                        {% else %}&#8212;{% endif %}
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value health-{{ stats.latest_health or 'unknown' }}">
-                            {% if stats.latest_health == 'excellent' %}Excellent
-                            {% elif stats.latest_health == 'warning' %}Good
-                            {% elif stats.latest_health == 'critical' %}Needs Attention
-                            {% else %}N/A{% endif %}
-                        </div>
-                        <div class="stat-label">Latest Health Status</div>
-                    </div>
-                </div>
-            </div>
+                {% endfor %}
             {% endif %}
+        {% endwith %}
 
-            <!-- Search/Filter (only if multiple reports) -->
-            {% if reports|length > 3 %}
-            <div class="search-bar">
-                <input type="text" id="reportSearch" class="form-input" placeholder="Search reports..." onkeyup="filterReports()">
-            </div>
-            {% endif %}
-
-            {% if reports %}
-                <div class="reports-grid" id="reportsGrid">
-                    {% for report in reports %}
-                        <div class="report-card" data-name="{{ report.name|lower }}">
-                            <!-- Health Status Indicator -->
-                            {% if report.summary %}
-                            <div class="report-health health-{{ report.summary.health_status or 'unknown' }}">
-                                {% if report.summary.health_status == 'excellent' %}&#9989; Excellent
-                                {% elif report.summary.health_status == 'warning' %}&#9888; Good
-                                {% elif report.summary.health_status == 'critical' %}&#10060; Needs Attention
-                                {% else %}&#8212;{% endif %}
-                            </div>
-                            {% endif %}
-
-                            <h3 class="report-name">{{ report.name }}</h3>
-                            <p class="report-date">{{ report.modified_formatted }}</p>
-
-                            <!-- Report Preview/Summary -->
-                            {% if report.summary %}
-                            <div class="report-summary">
-                                {% if report.summary.total_requests %}
-                                <div class="summary-item">
-                                    <span class="summary-label">AI Requests</span>
-                                    <span class="summary-value">{{ report.summary.total_requests }}</span>
-                                </div>
-                                {% endif %}
-                                {% if report.summary.success_rate %}
-                                <div class="summary-item">
-                                    <span class="summary-label">Success Rate</span>
-                                    <span class="summary-value">{{ report.summary.success_rate }}%</span>
-                                </div>
-                                {% endif %}
-                                {% if report.summary.top_bot %}
-                                <div class="summary-item">
-                                    <span class="summary-label">Top Bot</span>
-                                    <span class="summary-value">{{ report.summary.top_bot }}</span>
-                                </div>
-                                {% endif %}
-                            </div>
-                            {% endif %}
-
-                            <div class="report-actions">
-                                <a href="{{ url_for('view_report', client_id=client_id, report_filename=report.filename) }}"
-                                   class="btn btn-primary btn-small"
-                                   target="_blank">
-                                    View Report
-                                </a>
-                                <a href="{{ url_for('download_report', client_id=client_id, report_filename=report.filename) }}"
-                                   class="btn btn-secondary btn-small">
-                                    Download
-                                </a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-
-                <!-- Compare Reports (if 2+ reports) -->
-                {% if reports|length >= 2 %}
-                <div class="compare-section">
-                    <h3>Compare Reports</h3>
-                    <p class="compare-hint">See how your AI bot traffic has changed over time</p>
-                    <div class="compare-selector">
-                        <select id="compareReport1" class="form-input">
-                            {% for report in reports %}
-                            <option value="{{ loop.index0 }}" {% if loop.index == 1 %}selected{% endif %}>{{ report.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <span class="compare-vs">vs</span>
-                        <select id="compareReport2" class="form-input">
-                            {% for report in reports %}
-                            <option value="{{ loop.index0 }}" {% if loop.index == 2 %}selected{% endif %}>{{ report.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <button class="btn btn-secondary" onclick="compareReports()">Compare</button>
-                    </div>
-                    <div id="compareResults" class="compare-results" style="display: none;"></div>
-                </div>
-                {% endif %}
-
-            {% else %}
-                <div class="empty-state">
-                    <div class="empty-icon">&#128203;</div>
-                    <h3 class="empty-title">No Reports Yet</h3>
-                    <p class="empty-text">
-                        Your AI bot traffic reports will appear here once they're ready.<br>
-                        Please check back later or contact your administrator.
-                    </p>
-                </div>
-            {% endif %}
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1>{% if company_name %}{{ company_name }}{% else %}{{ username }}{% endif %}'s Dashboard</h1>
+            <p>Monitor your AI bot traffic and site health</p>
         </div>
+
+        <!-- Stats Overview -->
+        {% if stats.total_reports > 0 %}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value">{{ stats.total_reports }}</div>
+                <div class="stat-label">Total Reports</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-value" style="font-size: 1.2em;">{{ stats.last_report_date or 'N/A' }}</div>
+                <div class="stat-label">Latest Report</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    {% if stats.latest_health == 'excellent' %}✅
+                    {% elif stats.latest_health == 'warning' %}⚠️
+                    {% elif stats.latest_health == 'critical' %}❌
+                    {% else %}—{% endif %}
+                </div>
+                <div class="stat-value health-{{ stats.latest_health or 'unknown' }}">
+                    {% if stats.latest_health == 'excellent' %}Excellent
+                    {% elif stats.latest_health == 'warning' %}Good
+                    {% elif stats.latest_health == 'critical' %}Attention
+                    {% else %}N/A{% endif %}
+                </div>
+                <div class="stat-label">Latest Health</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🤖</div>
+                <div class="stat-value">{{ stats.latest_requests or '—' }}</div>
+                <div class="stat-label">Latest AI Requests</div>
+            </div>
+        </div>
+
+        <!-- Trend Chart -->
+        {% if reports|length >= 2 %}
+        <div class="trend-section">
+            <div class="trend-header">
+                <div class="trend-title">📈 Success Rate Trend</div>
+            </div>
+            <div class="chart-container">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+
+        <!-- Controls Bar -->
+        {% if reports %}
+        <div class="controls-bar">
+            <div class="controls-left">
+                <div class="search-box">
+                    <input type="text" id="reportSearch" placeholder="Search reports..." onkeyup="filterReports()">
+                </div>
+                <select class="filter-dropdown" id="healthFilter" onchange="filterByHealth()">
+                    <option value="all">All Health Status</option>
+                    <option value="excellent">✅ Excellent</option>
+                    <option value="warning">⚠️ Good</option>
+                    <option value="critical">❌ Needs Attention</option>
+                </select>
+                <select class="filter-dropdown" id="sortBy" onchange="sortReports()">
+                    <option value="date-desc">Newest First</option>
+                    <option value="date-asc">Oldest First</option>
+                    <option value="health">By Health</option>
+                    <option value="name">By Name</option>
+                </select>
+            </div>
+            <div class="controls-right">
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="setView('grid')" title="Grid View">📇</button>
+                    <button class="view-btn" onclick="setView('table')" title="Table View">📋</button>
+                    <button class="view-btn" onclick="setView('timeline')" title="Timeline View">📅</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid View -->
+        <div class="reports-grid" id="reportsGrid">
+            {% for report in reports %}
+            <div class="report-card"
+                 data-name="{{ report.name|lower }}"
+                 data-health="{{ report.summary.health_status if report.summary else 'unknown' }}"
+                 data-date="{{ report.modified_timestamp if report.modified_timestamp else 0 }}">
+                <div class="report-card-header">
+                    {% if report.summary %}
+                    <div class="report-health-badge {{ report.summary.health_status or 'unknown' }}">
+                        {% if report.summary.health_status == 'excellent' %}✅ Excellent
+                        {% elif report.summary.health_status == 'warning' %}⚠️ Good
+                        {% elif report.summary.health_status == 'critical' %}❌ Needs Attention
+                        {% else %}— Unknown{% endif %}
+                    </div>
+                    {% endif %}
+                    <h3 class="report-name">{{ report.name }}</h3>
+                    <p class="report-date">📅 {{ report.modified_formatted }}</p>
+                </div>
+
+                {% if report.summary %}
+                <div class="report-card-body">
+                    <div class="report-metrics">
+                        {% if report.summary.total_requests %}
+                        <div class="report-metric">
+                            <div class="report-metric-value">{{ report.summary.total_requests }}</div>
+                            <div class="report-metric-label">AI Requests</div>
+                        </div>
+                        {% endif %}
+                        {% if report.summary.success_rate %}
+                        <div class="report-metric">
+                            <div class="report-metric-value">{{ report.summary.success_rate }}%</div>
+                            <div class="report-metric-label">Success Rate</div>
+                        </div>
+                        {% endif %}
+                        {% if report.summary.top_bot %}
+                        <div class="report-metric">
+                            <div class="report-metric-value" style="font-size: 1em;">{{ report.summary.top_bot }}</div>
+                            <div class="report-metric-label">Top Bot</div>
+                        </div>
+                        {% endif %}
+                        {% if report.summary.issues_count is defined %}
+                        <div class="report-metric">
+                            <div class="report-metric-value" style="color: {{ '#f56565' if report.summary.issues_count > 0 else '#48bb78' }};">{{ report.summary.issues_count }}</div>
+                            <div class="report-metric-label">Issues</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="report-card-footer">
+                    <a href="{{ url_for('view_report', client_id=client_id, report_filename=report.filename) }}"
+                       class="btn btn-primary btn-small" target="_blank">
+                        View Report
+                    </a>
+                    <a href="{{ url_for('download_report', client_id=client_id, report_filename=report.filename) }}"
+                       class="btn btn-secondary btn-small">
+                        Download
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Table View -->
+        <div class="reports-table-container" id="reportsTable">
+            <table class="reports-table">
+                <thead>
+                    <tr>
+                        <th>Report Name</th>
+                        <th>Date</th>
+                        <th>Health</th>
+                        <th>AI Requests</th>
+                        <th>Success Rate</th>
+                        <th>Top Bot</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr data-name="{{ report.name|lower }}"
+                        data-health="{{ report.summary.health_status if report.summary else 'unknown' }}">
+                        <td class="report-name-cell">{{ report.name }}</td>
+                        <td>{{ report.modified_formatted }}</td>
+                        <td>
+                            {% if report.summary %}
+                            <span class="table-health-badge {{ report.summary.health_status or 'unknown' }}" style="background: {% if report.summary.health_status == 'excellent' %}#c6f6d5{% elif report.summary.health_status == 'warning' %}#fef3c7{% elif report.summary.health_status == 'critical' %}#fed7d7{% else %}#e2e8f0{% endif %}; color: {% if report.summary.health_status == 'excellent' %}#276749{% elif report.summary.health_status == 'warning' %}#92400e{% elif report.summary.health_status == 'critical' %}#c53030{% else %}#4a5568{% endif %};">
+                                {% if report.summary.health_status == 'excellent' %}Excellent
+                                {% elif report.summary.health_status == 'warning' %}Good
+                                {% elif report.summary.health_status == 'critical' %}Attention
+                                {% else %}Unknown{% endif %}
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>{{ report.summary.total_requests if report.summary and report.summary.total_requests else '—' }}</td>
+                        <td>{{ report.summary.success_rate + '%' if report.summary and report.summary.success_rate else '—' }}</td>
+                        <td>{{ report.summary.top_bot if report.summary and report.summary.top_bot else '—' }}</td>
+                        <td>
+                            <div class="table-actions">
+                                <a href="{{ url_for('view_report', client_id=client_id, report_filename=report.filename) }}"
+                                   class="btn btn-primary btn-small" target="_blank">View</a>
+                                <a href="{{ url_for('download_report', client_id=client_id, report_filename=report.filename) }}"
+                                   class="btn btn-secondary btn-small">Download</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Timeline View -->
+        <div class="timeline-container" id="reportsTimeline">
+            <div class="timeline">
+                {% for report in reports %}
+                <div class="timeline-item"
+                     data-name="{{ report.name|lower }}"
+                     data-health="{{ report.summary.health_status if report.summary else 'unknown' }}">
+                    <div class="timeline-date">📅 {{ report.modified_formatted }}</div>
+                    <div class="timeline-content">
+                        <div class="timeline-info">
+                            <h4>{{ report.name }}</h4>
+                            {% if report.summary %}
+                            <span class="report-health-badge {{ report.summary.health_status or 'unknown' }}" style="font-size: 0.75em;">
+                                {% if report.summary.health_status == 'excellent' %}✅ Excellent
+                                {% elif report.summary.health_status == 'warning' %}⚠️ Good
+                                {% elif report.summary.health_status == 'critical' %}❌ Needs Attention
+                                {% else %}— Unknown{% endif %}
+                            </span>
+                            {% endif %}
+                        </div>
+                        {% if report.summary %}
+                        <div class="timeline-stats">
+                            {% if report.summary.total_requests %}
+                            <div class="timeline-stat">
+                                <div class="timeline-stat-value">{{ report.summary.total_requests }}</div>
+                                <div class="timeline-stat-label">Requests</div>
+                            </div>
+                            {% endif %}
+                            {% if report.summary.success_rate %}
+                            <div class="timeline-stat">
+                                <div class="timeline-stat-value">{{ report.summary.success_rate }}%</div>
+                                <div class="timeline-stat-label">Success</div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        <div class="timeline-actions">
+                            <a href="{{ url_for('view_report', client_id=client_id, report_filename=report.filename) }}"
+                               class="btn btn-primary btn-small" target="_blank">View</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Compare Section -->
+        {% if reports|length >= 2 %}
+        <div class="compare-section">
+            <div class="compare-header">
+                <div class="compare-title">📊 Compare Reports</div>
+            </div>
+            <p style="color: #718096; margin-bottom: 20px;">See how your AI bot traffic has changed over time</p>
+            <div class="compare-selector">
+                <select id="compareReport1" class="filter-dropdown">
+                    {% for report in reports %}
+                    <option value="{{ loop.index0 }}" {% if loop.index == 1 %}selected{% endif %}>{{ report.name }}</option>
+                    {% endfor %}
+                </select>
+                <span class="compare-vs">vs</span>
+                <select id="compareReport2" class="filter-dropdown">
+                    {% for report in reports %}
+                    <option value="{{ loop.index0 }}" {% if loop.index == 2 %}selected{% endif %}>{{ report.name }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-primary" onclick="compareReports()">Compare</button>
+            </div>
+            <div id="compareResults" class="compare-results" style="display: none;"></div>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <h3 class="empty-title">No Reports Yet</h3>
+            <p class="empty-text">
+                Your AI bot traffic reports will appear here once they're ready.<br>
+                Check back later or contact your administrator.
+            </p>
+        </div>
+        {% endif %}
     </main>
 
     <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 Vaseo. All rights reserved. | <a href="https://vaseo.xyz" target="_blank">vaseo.xyz</a></p>
-        </div>
+        <p>&copy; 2025 Vaseo. All rights reserved. | <a href="https://vaseo.xyz" target="_blank">vaseo.xyz</a></p>
     </footer>
 
     <script>
-        // Search/Filter reports
-        function filterReports() {
-            const searchTerm = document.getElementById('reportSearch').value.toLowerCase();
-            const cards = document.querySelectorAll('.report-card');
-
-            cards.forEach(card => {
-                const name = card.getAttribute('data-name');
-                if (name.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        // Compare reports
+        // Reports data for JS operations
         const reportsData = [
             {% for report in reports %}
             {
                 name: "{{ report.name }}",
+                date: "{{ report.modified_formatted }}",
+                timestamp: {{ report.modified_timestamp if report.modified_timestamp else 0 }},
                 summary: {{ report.summary|tojson if report.summary else 'null' }}
             }{% if not loop.last %},{% endif %}
             {% endfor %}
         ];
 
+        // View switching
+        function setView(view) {
+            const grid = document.getElementById('reportsGrid');
+            const table = document.getElementById('reportsTable');
+            const timeline = document.getElementById('reportsTimeline');
+            const buttons = document.querySelectorAll('.view-btn');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            grid.style.display = view === 'grid' ? 'grid' : 'none';
+            table.style.display = view === 'table' ? 'block' : 'none';
+            timeline.style.display = view === 'timeline' ? 'block' : 'none';
+        }
+
+        // Search filter
+        function filterReports() {
+            const searchTerm = document.getElementById('reportSearch').value.toLowerCase();
+            const healthFilter = document.getElementById('healthFilter').value;
+
+            document.querySelectorAll('.report-card, .reports-table tbody tr, .timeline-item').forEach(item => {
+                const name = item.getAttribute('data-name');
+                const health = item.getAttribute('data-health');
+
+                const matchesSearch = name.includes(searchTerm);
+                const matchesHealth = healthFilter === 'all' || health === healthFilter;
+
+                item.style.display = (matchesSearch && matchesHealth) ? '' : 'none';
+            });
+        }
+
+        // Health filter
+        function filterByHealth() {
+            filterReports();
+        }
+
+        // Sort reports
+        function sortReports() {
+            const sortBy = document.getElementById('sortBy').value;
+            const grid = document.getElementById('reportsGrid');
+            const cards = Array.from(grid.querySelectorAll('.report-card'));
+
+            cards.sort((a, b) => {
+                if (sortBy === 'date-desc') {
+                    return (b.getAttribute('data-date') || 0) - (a.getAttribute('data-date') || 0);
+                } else if (sortBy === 'date-asc') {
+                    return (a.getAttribute('data-date') || 0) - (b.getAttribute('data-date') || 0);
+                } else if (sortBy === 'health') {
+                    const order = { 'excellent': 1, 'warning': 2, 'critical': 3, 'unknown': 4 };
+                    return (order[a.getAttribute('data-health')] || 4) - (order[b.getAttribute('data-health')] || 4);
+                } else if (sortBy === 'name') {
+                    return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
+                }
+                return 0;
+            });
+
+            cards.forEach(card => grid.appendChild(card));
+        }
+
+        // Compare reports
         function compareReports() {
             const idx1 = parseInt(document.getElementById('compareReport1').value);
             const idx2 = parseInt(document.getElementById('compareReport2').value);
@@ -228,7 +572,6 @@
             }
 
             const resultsDiv = document.getElementById('compareResults');
-
             let html = '<div class="compare-grid">';
 
             // Compare success rates
@@ -242,21 +585,19 @@
                     <div class="compare-item">
                         <div class="compare-label">Success Rate</div>
                         <div class="compare-values">
-                            <span>${report1.name}: <strong>${rate1}%</strong></span>
+                            <span><strong>${rate1}%</strong></span>
                             <span class="compare-arrow ${trend}">${trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→'}</span>
-                            <span>${report2.name}: <strong>${rate2}%</strong></span>
+                            <span><strong>${rate2}%</strong></span>
                         </div>
-                        <div class="compare-diff ${trend}">
-                            ${diff > 0 ? '+' : ''}${diff.toFixed(1)}% change
-                        </div>
+                        <div class="compare-diff ${trend}">${diff > 0 ? '+' : ''}${diff.toFixed(1)}%</div>
                     </div>
                 `;
             }
 
             // Compare total requests
             if (report1.summary.total_requests && report2.summary.total_requests) {
-                const req1 = parseInt(report1.summary.total_requests.replace(/,/g, ''));
-                const req2 = parseInt(report2.summary.total_requests.replace(/,/g, ''));
+                const req1 = parseInt(report1.summary.total_requests.toString().replace(/,/g, ''));
+                const req2 = parseInt(report2.summary.total_requests.toString().replace(/,/g, ''));
                 const diff = req1 - req2;
                 const trend = diff > 0 ? 'up' : diff < 0 ? 'down' : 'same';
 
@@ -264,22 +605,59 @@
                     <div class="compare-item">
                         <div class="compare-label">Total AI Requests</div>
                         <div class="compare-values">
-                            <span>${report1.name}: <strong>${report1.summary.total_requests}</strong></span>
+                            <span><strong>${req1.toLocaleString()}</strong></span>
                             <span class="compare-arrow ${trend}">${trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→'}</span>
-                            <span>${report2.name}: <strong>${report2.summary.total_requests}</strong></span>
+                            <span><strong>${req2.toLocaleString()}</strong></span>
                         </div>
-                        <div class="compare-diff ${trend}">
-                            ${diff > 0 ? '+' : ''}${diff.toLocaleString()} requests
-                        </div>
+                        <div class="compare-diff ${trend}">${diff > 0 ? '+' : ''}${diff.toLocaleString()}</div>
                     </div>
                 `;
             }
 
             html += '</div>';
-
             resultsDiv.innerHTML = html;
             resultsDiv.style.display = 'block';
         }
+
+        // Trend Chart
+        {% if reports|length >= 2 %}
+        const trendLabels = reportsData.map(r => r.date).reverse();
+        const trendData = reportsData.map(r => r.summary ? parseFloat(r.summary.success_rate) : null).reverse();
+
+        new Chart(document.getElementById('trendChart'), {
+            type: 'line',
+            data: {
+                labels: trendLabels,
+                datasets: [{
+                    label: 'Success Rate (%)',
+                    data: trendData,
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: '#667eea',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 0,
+                        max: 100,
+                        ticks: { callback: value => value + '%' }
+                    }
+                }
+            }
+        });
+        {% endif %}
     </script>
 </body>
 </html>
