@@ -321,6 +321,8 @@
             position: relative;
             transition: all 0.3s ease;
             overflow: hidden;
+            cursor: pointer;
+            display: block;
         }
 
         .blog-card:hover {
@@ -602,7 +604,7 @@
         <div class="blog-grid">
 
             <!-- Featured Post -->
-            <article class="blog-card featured">
+            <a href="/blog/how-ai-bots-crawl-your-site/" class="blog-card featured" style="text-decoration: none; color: inherit;">
                 <span class="featured-badge">FEATURED</span>
                 <div class="blog-card-image">
                     <span class="placeholder-icon">&#129302;</span>
@@ -613,11 +615,11 @@
                     <p class="blog-card-excerpt">AI tools like ChatGPT, Claude, and Perplexity send bots to crawl websites. Here's how it works, from the basics to server logs, user agents, status codes, and what you can do about it.</p>
                     <div class="blog-card-meta">
                         <span class="blog-card-date">January 2026</span>
-                        <a href="/blog/how-ai-bots-crawl-your-site/" class="blog-card-read">READ</a>
+                        <span class="blog-card-read">READ</span>
                     </div>
                 </div>
                 <div class="speed-lines-small"></div>
-            </article>
+            </a>
 
             <!-- More posts coming soon
             <div class="coming-soon-panel">
