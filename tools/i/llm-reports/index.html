@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Reports - AI Bot Traffic Analysis | Vaseo</title>
+    <meta name="description" content="Understand how AI bots like ChatGPT, Claude, and Perplexity crawl your website. Get detailed reports on bot accessibility, crawl patterns, and actionable recommendations.">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Vasil Andreev">
+    <link rel="canonical" href="https://vaseo.xyz/tools/i/llm-reports/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://vaseo.xyz/tools/i/llm-reports/">
+    <meta property="og:title" content="LLM Reports - AI Bot Traffic Analysis | Vaseo">
+    <meta property="og:description" content="Understand how AI bots crawl your website. Get detailed reports on bot accessibility and actionable recommendations.">
+    <meta property="og:image" content="https://vaseo.xyz/photo.jpg">
+    <meta property="og:locale" content="en_GB">
+    <meta property="og:site_name" content="Vaseo">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://vaseo.xyz/tools/i/llm-reports/">
+    <meta name="twitter:title" content="LLM Reports - AI Bot Traffic Analysis | Vaseo">
+    <meta name="twitter:description" content="Understand how AI bots crawl your website. Get detailed reports on bot accessibility and actionable recommendations.">
+    <meta name="twitter:image" content="https://vaseo.xyz/photo.jpg">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <meta name="theme-color" content="#000000">
+
+    <!-- Preconnect for faster font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Noto+Sans+JP:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "LLM Reports",
+        "applicationCategory": "SEO Tool",
+        "description": "AI bot traffic analysis tool that helps website owners understand how ChatGPT, Claude, Perplexity and other AI bots crawl their sites.",
+        "offers": {
+            "@type": "Offer",
+            "availability": "https://schema.org/InStock"
+        },
+        "provider": {
+            "@type": "Person",
+            "name": "Vasil Andreev",
+            "url": "https://vaseo.xyz"
+        }
+    }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #fff;
+            font-family: 'Noto Sans JP', sans-serif;
+            color: #000;
+            overflow-x: hidden;
+        }
+
+        /* ======================== */
+        /* NAVIGATION               */
+        /* ======================== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 2px solid #000;
+        }
+
+        .logo {
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #000;
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        nav a {
+            color: #000;
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile Menu Button */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: #000;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* ======================== */
+        /* HERO SECTION             */
+        /* ======================== */
+        .hero {
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 120px 40px 60px;
+            border-bottom: 2px solid #000;
+            text-align: center;
+        }
+
+        .hero-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .hero-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4rem;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-family: 'Caveat', cursive;
+            font-size: 1.6rem;
+            color: #333;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        /* ======================== */
+        /* MANGA PANELS             */
+        /* ======================== */
+        .manga-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px 40px 20px;
+            overflow: visible;
+        }
+
+        .panel-row {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 4px;
+            overflow: visible;
+        }
+
+        .panel {
+            background: #fff;
+            border: 2px solid #000;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 25px;
+            overflow: visible;
+        }
+
+        /* Speech Bubble */
+        .bubble {
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 30px;
+            padding: 15px 20px;
+            display: inline-block;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 25px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #000;
+        }
+
+        .bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 27px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 10px solid #fff;
+            z-index: 1;
+        }
+
+        .bubble-no-tail::after,
+        .bubble-no-tail::before {
+            display: none;
+        }
+
+        /* Chapter Header */
+        .chapter-header {
+            text-align: center;
+            padding: 30px;
+            border: 2px solid #000;
+            margin-bottom: 4px;
+            background: #fff;
+            overflow: visible;
+            position: relative;
+        }
+
+        .chapter-number {
+            font-family: 'Caveat', cursive;
+            font-size: 1rem;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .chapter-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #000;
+        }
+
+        /* Narration Text */
+        .narration-text {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #000;
+        }
+
+        .panel-dark .narration-text {
+            color: #fff;
+        }
+
+        /* Panel Dark */
+        .panel-dark {
+            background: #000;
+            color: #fff;
+        }
+
+        .panel-dark .bubble {
+            background: #000;
+            color: #fff;
+            border-color: #fff;
+        }
+
+        .panel-dark .bubble::after {
+            border-top-color: #fff;
+        }
+
+        .panel-dark .bubble::before {
+            border-top-color: #000;
+        }
+
+        /* Big Number */
+        .big-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            line-height: 1;
+        }
+
+        .big-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .panel-dark .big-label {
+            color: #999;
+        }
+
+        /* Feature Item */
+        .feature-item {
+            margin-bottom: 20px;
+        }
+
+        .feature-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .feature-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .feature-desc {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .panel-dark .feature-desc {
+            color: #999;
+        }
+
+        /* Bot Tags */
+        .bot-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .bot-tag {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            padding: 8px 15px;
+            border: 2px solid #000;
+            background: #fff;
+        }
+
+        .panel-dark .bot-tag {
+            border-color: #fff;
+            background: #000;
+            color: #fff;
+        }
+
+        /* Insight Cards */
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .insight-card {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .insight-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .insight-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .insight-desc {
+            font-size: 0.75rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Requirements List */
+        .requirements-list {
+            list-style: none;
+        }
+
+        .requirements-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .requirements-list li:last-child {
+            border-bottom: none;
+        }
+
+        .req-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            color: #999;
+            min-width: 25px;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #000;
+            color: #fff;
+            padding: 15px 40px;
+            text-decoration: none;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            border: 2px solid #000;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .cta-secondary {
+            display: inline-block;
+            margin-left: 20px;
+            color: #000;
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #000;
+            padding-bottom: 2px;
+        }
+
+        .cta-secondary:hover {
+            color: #666;
+            border-color: #666;
+        }
+
+        /* Section Spacer */
+        .section-spacer {
+            height: 60px;
+        }
+
+        /* ======================== */
+        /* FOOTER                   */
+        /* ======================== */
+        footer {
+            background: #f5f5f5;
+            border-top: 2px solid #000;
+            padding: 40px;
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: #000;
+            text-decoration: underline;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: #666;
+        }
+
+        footer p {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        footer p a {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        /* ======================== */
+        /* RESPONSIVE               */
+        /* ======================== */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            nav ul {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: #fff;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 30px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+
+            nav ul.active {
+                transform: translateX(0);
+            }
+
+            nav ul li a {
+                font-size: 1.5rem;
+                font-family: 'Bebas Neue', sans-serif;
+                letter-spacing: 3px;
+            }
+
+            .hero {
+                padding: 100px 20px 40px;
+                min-height: 50vh;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.3rem;
+            }
+
+            .manga-page {
+                padding: 20px 15px;
+            }
+
+            .panel-row {
+                flex-direction: column;
+            }
+
+            .panel {
+                padding: 20px;
+            }
+
+            .chapter-header {
+                padding: 20px;
+            }
+
+            .chapter-title {
+                font-size: 1.5rem;
+                letter-spacing: 2px;
+            }
+
+            .big-number {
+                font-size: 2.5rem;
+            }
+
+            .insight-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-secondary {
+                display: block;
+                margin: 20px 0 0 0;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .chapter-title {
+                font-size: 1.3rem;
+            }
+
+            .big-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== -->
+    <!-- NAVIGATION           -->
+    <!-- ==================== -->
+    <nav>
+        <a href="/" class="logo">Vaseo</a>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/#chapter-03">Services</a></li>
+            <li><a href="/tools/">Tools</a></li>
+            <li><a href="/#contact">Contact</a></li>
+        </ul>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- ==================== -->
+    <!-- HERO SECTION         -->
+    <!-- ==================== -->
+    <section class="hero">
+        <p class="hero-label">SEO TOOL</p>
+        <h1 class="hero-title">LLM Reports</h1>
+        <p class="hero-subtitle">
+            Find out if AI bots can actually access your website, and what they're doing when they visit.
+        </p>
+    </section>
+
+    <!-- ==================== -->
+    <!-- MAIN CONTENT         -->
+    <!-- ==================== -->
+    <main class="manga-page">
+
+        <!-- Chapter 01: The Problem -->
+        <div class="chapter-header">
+            <p class="chapter-number">Chapter 01</p>
+            <h2 class="chapter-title">The Problem</h2>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <div class="bubble bubble-no-tail" style="max-width: 100%;">
+                    Here's the thing. AI tools like ChatGPT, Claude, and Perplexity are now part of how people find information. They send bots to crawl websites, just like Google does.
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel panel-dark" style="flex: 1;">
+                <p class="narration-text">
+                    But most website owners have no idea if these bots are actually reaching their content. Are they getting blocked? Are they hitting errors? Is your site even accessible to AI?
+                </p>
+            </div>
+            <div class="panel" style="flex: 1; text-align: center;">
+                <p class="big-number">?</p>
+                <p class="big-label">Most sites don't know</p>
+            </div>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <p class="narration-text">
+                    If AI bots can't crawl your site properly, your content won't show up in AI-generated answers. Simple as that. And you'd never know there was a problem in the first place.
+                </p>
+            </div>
+        </div>
+
+        <!-- Spacer -->
+        <div class="section-spacer"></div>
+
+        <!-- Chapter 02: What This Tool Does -->
+        <div class="chapter-header">
+            <p class="chapter-number">Chapter 02</p>
+            <h2 class="chapter-title">What This Tool Does</h2>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <div class="bubble bubble-no-tail" style="max-width: 100%;">
+                    LLM Reports analyses your server logs to find out exactly what AI bots are doing on your site. No guesswork. Just data.
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <p style="font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 15px;">BOTS WE TRACK</p>
+                <div class="bot-tags">
+                    <span class="bot-tag">GPTBot</span>
+                    <span class="bot-tag">ClaudeBot</span>
+                    <span class="bot-tag">PerplexityBot</span>
+                    <span class="bot-tag">Google AI</span>
+                    <span class="bot-tag">Bingbot</span>
+                    <span class="bot-tag">+ More</span>
+                </div>
+            </div>
+            <div class="panel panel-dark" style="flex: 1;">
+                <p class="narration-text">
+                    I look at your raw server logs and extract every visit from known AI crawlers. Then I turn that into something you can actually understand and act on.
+                </p>
+            </div>
+        </div>
+
+        <!-- Spacer -->
+        <div class="section-spacer"></div>
+
+        <!-- Chapter 03: What You Get -->
+        <div class="chapter-header">
+            <p class="chapter-number">Chapter 03</p>
+            <h2 class="chapter-title">What You Get</h2>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <div class="bubble bubble-no-tail" style="max-width: 100%;">
+                    You get a dashboard where you can see all your reports. Each report breaks down what's happening with AI bots on your site.
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <div class="insight-grid">
+                    <div class="insight-card">
+                        <div class="insight-icon">&#128202;</div>
+                        <p class="insight-title">Bot Traffic Overview</p>
+                        <p class="insight-desc">Which AI bots visited, how often, and what percentage of your traffic they represent.</p>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">&#9989;</div>
+                        <p class="insight-title">Success Rates</p>
+                        <p class="insight-desc">How many requests succeeded vs failed. If bots are hitting errors, you'll know.</p>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">&#128337;</div>
+                        <p class="insight-title">Crawl Patterns</p>
+                        <p class="insight-desc">When bots visit, which pages they prefer, and how deep they crawl into your site.</p>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">&#128270;</div>
+                        <p class="insight-title">Problem Detection</p>
+                        <p class="insight-desc">Pages returning errors, redirect loops, and anything else blocking bots from your content.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel panel-dark" style="flex: 1;">
+                <div class="feature-item">
+                    <p class="feature-title">SEO Health Score</p>
+                    <p class="feature-desc">A quick way to see how accessible your site is to AI crawlers overall. Based on success rates and error patterns.</p>
+                </div>
+            </div>
+            <div class="panel" style="flex: 1;">
+                <div class="feature-item">
+                    <p class="feature-title">Actionable Recommendations</p>
+                    <p class="feature-desc">Not just data. You get specific suggestions on what to fix, prioritised by impact.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <div class="feature-item">
+                    <p class="feature-title">Crawl Efficiency Analysis</p>
+                    <p class="feature-desc">Are bots wasting time on CSS and images instead of your actual content? This tells you.</p>
+                </div>
+            </div>
+            <div class="panel panel-dark" style="flex: 1;">
+                <div class="feature-item">
+                    <p class="feature-title">Bot Compliance Check</p>
+                    <p class="feature-desc">See which bots respect your robots.txt and sitemap, and which ones ignore them.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spacer -->
+        <div class="section-spacer"></div>
+
+        <!-- Chapter 04: What's Needed -->
+        <div class="chapter-header">
+            <p class="chapter-number">Chapter 04</p>
+            <h2 class="chapter-title">What I Need From You</h2>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <div class="bubble bubble-no-tail" style="max-width: 100%;">
+                    Just one thing, really. Your server logs.
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <ul class="requirements-list">
+                    <li>
+                        <span class="req-number">01</span>
+                        <span><strong>Server access logs</strong> - These are the raw logs from your web server (Apache, Nginx, or similar). They contain every request made to your site, including bot visits.</span>
+                    </li>
+                    <li>
+                        <span class="req-number">02</span>
+                        <span><strong>At least a few days of data</strong> - The more data, the better the insights. A week or a month gives a clearer picture of bot behaviour.</span>
+                    </li>
+                    <li>
+                        <span class="req-number">03</span>
+                        <span><strong>That's it</strong> - I handle the rest. Parsing, analysis, and generating your report.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel panel-dark" style="flex: 1;">
+                <p class="narration-text">
+                    Not sure how to get your server logs? No problem. I can walk you through it, or work with your developer to get what's needed.
+                </p>
+            </div>
+        </div>
+
+        <!-- Spacer -->
+        <div class="section-spacer"></div>
+
+        <!-- Chapter 05: How It Works -->
+        <div class="chapter-header">
+            <p class="chapter-number">Chapter 05</p>
+            <h2 class="chapter-title">How It Works</h2>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel" style="flex: 1; text-align: center;">
+                <p class="big-number">1</p>
+                <p class="big-label">You send me your logs</p>
+            </div>
+            <div class="panel panel-dark" style="flex: 1; text-align: center;">
+                <p class="big-number">2</p>
+                <p class="big-label">I run the analysis</p>
+            </div>
+            <div class="panel" style="flex: 1; text-align: center;">
+                <p class="big-number">3</p>
+                <p class="big-label">You get dashboard access</p>
+            </div>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <p class="narration-text">
+                    Once your report is ready, you'll get access to a secure dashboard where you can view everything. New reports can be added as you provide more data, so you can track changes over time.
+                </p>
+            </div>
+        </div>
+
+        <!-- Spacer -->
+        <div class="section-spacer"></div>
+
+        <!-- Chapter 06: Get Started -->
+        <div class="chapter-header">
+            <p class="chapter-number">Chapter 06</p>
+            <h2 class="chapter-title">Ready to Find Out?</h2>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel" style="flex: 1;">
+                <div class="bubble bubble-no-tail" style="max-width: 100%;">
+                    If you're curious about how AI bots see your website, let's talk. I'll explain how everything works and answer any questions you have.
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel cta-section" style="flex: 1;">
+                <a href="mailto:vasilandreev199@gmail.com" class="cta-button">BOOK A CALL</a>
+                <a href="mailto:vasilandreev199@gmail.com" class="cta-secondary">Or just email me</a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==================== -->
+    <!-- FOOTER               -->
+    <!-- ==================== -->
+    <footer>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/tools/">All Tools</a>
+            <a href="/#contact">Contact</a>
+        </div>
+        <p>&copy; 2026 <a href="https://www.linkedin.com/in/vasil-andreev-b34142219/" target="_blank">Vasil Andreev</a>. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMenu() {
+            const menu = document.querySelector('nav ul');
+            const menuToggle = document.querySelector('.menu-toggle');
+
+            menu.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', () => {
+                const menu = document.querySelector('nav ul');
+                const menuToggle = document.querySelector('.menu-toggle');
+
+                if (menu.classList.contains('active')) {
+                    menu.classList.remove('active');
+                    menuToggle.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
