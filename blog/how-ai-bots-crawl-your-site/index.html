@@ -306,14 +306,21 @@
             padding: 25px;
             margin: 25px 0;
             overflow-x: auto;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'JetBrains Mono', Consolas, Monaco, 'Courier New', monospace;
             font-size: 0.85rem;
             line-height: 1.6;
             border: 2px solid #000;
         }
 
         .code-block code {
-            white-space: pre;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #f8f8f2;
+            background: transparent;
+            border: none;
+            padding: 0;
+            font-family: inherit;
+            font-size: inherit;
         }
 
         .code-label {
