@@ -385,6 +385,29 @@
             color: #fff;
         }
 
+        /* Article Images */
+        .article-image {
+            margin: 30px 0;
+            border: 3px solid #000;
+            background: #fff;
+        }
+
+        .article-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .article-image figcaption {
+            font-family: 'Caveat', cursive;
+            font-size: 1rem;
+            color: #666;
+            padding: 12px 15px;
+            border-top: 2px solid #000;
+            text-align: center;
+            background: #f9f9f9;
+        }
+
         /* Image Placeholder */
         .image-placeholder {
             background: #f5f5f5;
@@ -772,11 +795,10 @@
             <li><strong>This repeats</strong> across your site, building a picture of your content.</li>
         </ol>
 
-        <div class="image-placeholder">
-            <div class="image-placeholder-icon">&#128640;</div>
-            <p class="image-placeholder-text">Diagram: Bot Crawling Flow</p>
-            <p class="image-placeholder-note">Add a visual showing: Bot → HTTP Request → Server → Response → Content Extraction</p>
-        </div>
+        <figure class="article-image">
+            <img src="/blog/how-ai-bots-crawl-your-site/ai bots.jpeg" alt="Comic showing how AI bots crawl websites: Bot sends HTTP request to server, server responds with data, bot extracts content">
+            <figcaption>How AI bots crawl your website - from request to content extraction</figcaption>
+        </figure>
 
         <p>
             Every single one of these interactions gets logged by your server. That log is a goldmine of information about how bots interact with your site.
@@ -881,11 +903,10 @@
             Some bots are transparent about who they are. Others try to disguise themselves as regular browsers. The legitimate AI bots from major companies will always identify themselves clearly.
         </p>
 
-        <div class="image-placeholder">
-            <div class="image-placeholder-icon">&#129302;</div>
-            <p class="image-placeholder-text">Infographic: AI Bot Identification Guide</p>
-            <p class="image-placeholder-note">Visual showing each bot's icon, name, company, and user agent pattern</p>
-        </div>
+        <figure class="article-image">
+            <img src="/blog/how-ai-bots-crawl-your-site/Gary.jpeg" alt="AI Bot Identification Guide showing GPTBot, ClaudeBot, PerplexityBot, and Google-Extended with their user agent strings">
+            <figcaption>Meet the AI bots - GPTBot, ClaudeBot, PerplexityBot, and Google-Extended</figcaption>
+        </figure>
 
         <!-- Section 5 -->
         <h2 id="status-codes">Status Codes Explained</h2>
