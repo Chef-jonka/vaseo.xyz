@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How AI Bots Crawl Your Website - A Complete Guide | Vaseo</title>
+    <meta name="description" content="Learn how AI bots like GPTBot, ClaudeBot, and PerplexityBot crawl websites. Understand server logs, user agents, status codes, and how to optimise your site for AI visibility.">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Vasil Andreev">
+    <link rel="canonical" href="https://vaseo.xyz/blog/how-ai-bots-crawl-your-site/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://vaseo.xyz/blog/how-ai-bots-crawl-your-site/">
+    <meta property="og:title" content="How AI Bots Crawl Your Website - A Complete Guide">
+    <meta property="og:description" content="Learn how AI bots like GPTBot, ClaudeBot, and PerplexityBot crawl websites. Understand server logs, user agents, status codes, and how to optimise your site for AI visibility.">
+    <meta property="og:image" content="https://vaseo.xyz/photo.jpg">
+    <meta property="og:locale" content="en_GB">
+    <meta property="article:published_time" content="2026-01-26">
+    <meta property="article:author" content="Vasil Andreev">
+    <meta property="article:section" content="Technical SEO">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="How AI Bots Crawl Your Website - A Complete Guide">
+    <meta name="twitter:description" content="Learn how AI bots like GPTBot, ClaudeBot, and PerplexityBot crawl websites.">
+    <meta name="twitter:image" content="https://vaseo.xyz/photo.jpg">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <meta name="theme-color" content="#000000">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Noto+Sans+JP:wght@400;700&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "How AI Bots Crawl Your Website - A Complete Guide",
+        "description": "Learn how AI bots like GPTBot, ClaudeBot, and PerplexityBot crawl websites. Understand server logs, user agents, status codes, and how to optimise your site for AI visibility.",
+        "author": {
+            "@type": "Person",
+            "name": "Vasil Andreev",
+            "url": "https://vaseo.xyz"
+        },
+        "publisher": {
+            "@type": "Person",
+            "name": "Vasil Andreev"
+        },
+        "datePublished": "2026-01-26",
+        "dateModified": "2026-01-26",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://vaseo.xyz/blog/how-ai-bots-crawl-your-site/"
+        }
+    }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #fff;
+            font-family: 'Noto Sans JP', sans-serif;
+            color: #000;
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* ======================== */
+        /* NAVIGATION               */
+        /* ======================== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 2px solid #000;
+        }
+
+        .logo {
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #000;
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        nav a {
+            color: #000;
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: #000;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* ======================== */
+        /* ARTICLE HEADER           */
+        /* ======================== */
+        .article-header {
+            padding: 140px 40px 60px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .article-category {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            background: #000;
+            color: #fff;
+            padding: 5px 12px;
+        }
+
+        .article-date {
+            font-family: 'Caveat', cursive;
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .article-read-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .article-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3.5rem;
+            letter-spacing: 2px;
+            line-height: 1.1;
+            margin-bottom: 25px;
+        }
+
+        .article-intro {
+            font-size: 1.2rem;
+            color: #444;
+            line-height: 1.7;
+            border-left: 4px solid #000;
+            padding-left: 20px;
+        }
+
+        /* ======================== */
+        /* ARTICLE CONTENT          */
+        /* ======================== */
+        .article-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 40px 80px;
+        }
+
+        .article-content p {
+            font-size: 1rem;
+            margin-bottom: 1.5em;
+            color: #333;
+        }
+
+        .article-content h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            margin: 60px 0 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #000;
+        }
+
+        .article-content h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            margin: 40px 0 15px;
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin: 0 0 1.5em 20px;
+            color: #333;
+        }
+
+        .article-content li {
+            margin-bottom: 0.5em;
+        }
+
+        .article-content a {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        .article-content a:hover {
+            color: #666;
+        }
+
+        .article-content strong {
+            font-weight: 700;
+        }
+
+        /* Speech Bubble */
+        .bubble {
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 30px;
+            padding: 20px 25px;
+            margin: 30px 0;
+            font-size: 1rem;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 30px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #000;
+        }
+
+        .bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 32px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 10px solid #fff;
+            z-index: 1;
+        }
+
+        .bubble-no-tail::after,
+        .bubble-no-tail::before {
+            display: none;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #1a1a1a;
+            color: #f8f8f2;
+            padding: 25px;
+            margin: 25px 0;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border: 2px solid #000;
+        }
+
+        .code-block code {
+            white-space: pre;
+        }
+
+        .code-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            background: #000;
+            color: #fff;
+            padding: 5px 12px;
+            display: inline-block;
+            margin-bottom: -2px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Inline Code */
+        .article-content code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #f5f5f5;
+            padding: 2px 6px;
+            font-size: 0.9em;
+            border: 1px solid #ddd;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #f9f9f9;
+            border: 2px solid #000;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .info-box-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box p {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+
+        /* Dark Panel */
+        .dark-panel {
+            background: #000;
+            color: #fff;
+            padding: 30px;
+            margin: 30px 0;
+            border: 2px solid #000;
+        }
+
+        .dark-panel h3 {
+            color: #fff;
+            margin-top: 0;
+        }
+
+        .dark-panel p {
+            color: #ccc;
+        }
+
+        .dark-panel code {
+            background: #333;
+            border-color: #444;
+            color: #fff;
+        }
+
+        /* Image Placeholder */
+        .image-placeholder {
+            background: #f5f5f5;
+            border: 3px dashed #ccc;
+            padding: 60px 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .image-placeholder-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        .image-placeholder-text {
+            font-family: 'Caveat', cursive;
+            font-size: 1.2rem;
+            color: #999;
+        }
+
+        .image-placeholder-note {
+            font-size: 0.8rem;
+            color: #bbb;
+            margin-top: 10px;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9rem;
+        }
+
+        .data-table th {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1px;
+            background: #000;
+            color: #fff;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .data-table code {
+            font-size: 0.85em;
+        }
+
+        /* Bot Tag */
+        .bot-tag {
+            display: inline-block;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            padding: 4px 10px;
+            border: 2px solid #000;
+            margin: 3px;
+        }
+
+        /* Status Code */
+        .status-code {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        .status-2xx { background: #d4edda; color: #155724; }
+        .status-3xx { background: #fff3cd; color: #856404; }
+        .status-4xx { background: #f8d7da; color: #721c24; }
+        .status-5xx { background: #f5c6cb; color: #721c24; }
+
+        /* CTA Section */
+        .cta-section {
+            background: #f9f9f9;
+            border: 3px solid #000;
+            padding: 40px;
+            margin: 50px 0;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .cta-text {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 25px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #000;
+            color: #fff;
+            padding: 15px 35px;
+            text-decoration: none;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            border: 2px solid #000;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        /* Back to Blog */
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            color: #666;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            color: #000;
+        }
+
+        .back-link::before {
+            content: '← ';
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: #f9f9f9;
+            border: 2px solid #000;
+            padding: 25px 30px;
+            margin: 30px 0;
+        }
+
+        .toc-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .toc ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .toc li {
+            margin-bottom: 8px;
+        }
+
+        .toc a {
+            color: #000;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background: #f5f5f5;
+            border-top: 2px solid #000;
+            padding: 40px;
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: #000;
+            text-decoration: underline;
+            font-size: 0.9rem;
+        }
+
+        footer p {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        footer p a {
+            color: #000;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            nav ul {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: #fff;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 30px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+
+            nav ul.active {
+                transform: translateX(0);
+            }
+
+            nav ul li a {
+                font-size: 1.5rem;
+                font-family: 'Bebas Neue', sans-serif;
+                letter-spacing: 3px;
+            }
+
+            .article-header {
+                padding: 100px 20px 40px;
+            }
+
+            .article-title {
+                font-size: 2.2rem;
+            }
+
+            .article-intro {
+                font-size: 1rem;
+            }
+
+            .article-content {
+                padding: 30px 20px 60px;
+            }
+
+            .article-content h2 {
+                font-size: 1.6rem;
+            }
+
+            .code-block {
+                padding: 15px;
+                font-size: 0.75rem;
+            }
+
+            .data-table {
+                font-size: 0.8rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 8px 10px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="/" class="logo">Vaseo</a>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/#chapter-03">Services</a></li>
+            <li><a href="/blog/">Blog</a></li>
+            <li><a href="/tools/">Tools</a></li>
+            <li><a href="/#contact">Contact</a></li>
+        </ul>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Article Header -->
+    <header class="article-header">
+        <a href="/blog/" class="back-link">Back to Blog</a>
+        <div class="article-meta">
+            <span class="article-category">AI & SEO</span>
+            <span class="article-date">January 2026</span>
+            <span class="article-read-time">12 min read</span>
+        </div>
+        <h1 class="article-title">How AI Bots Crawl Your Website</h1>
+        <p class="article-intro">
+            AI tools like ChatGPT, Claude, and Perplexity don't just pull answers from thin air. They send bots to crawl websites, just like Google does. Here's how it actually works, from the basics to the technical details.
+        </p>
+    </header>
+
+    <!-- Article Content -->
+    <article class="article-content">
+
+        <!-- Table of Contents -->
+        <div class="toc">
+            <p class="toc-title">IN THIS ARTICLE</p>
+            <ol>
+                <li><a href="#what-are-ai-bots">What Are AI Bots?</a></li>
+                <li><a href="#how-crawling-works">How Crawling Actually Works</a></li>
+                <li><a href="#reading-server-logs">Reading Your Server Logs</a></li>
+                <li><a href="#user-agents">Understanding User Agents</a></li>
+                <li><a href="#status-codes">Status Codes Explained</a></li>
+                <li><a href="#robots-txt">Robots.txt and AI Bots</a></li>
+                <li><a href="#crawl-budget">Crawl Budget and Efficiency</a></li>
+                <li><a href="#common-problems">Common Problems</a></li>
+                <li><a href="#what-to-do">What You Can Do About It</a></li>
+            </ol>
+        </div>
+
+        <!-- Section 1 -->
+        <h2 id="what-are-ai-bots">What Are AI Bots?</h2>
+
+        <p>
+            Let's start simple. When you ask ChatGPT a question or search something on Perplexity, the answer has to come from somewhere. These AI systems are trained on massive amounts of data, but they also need fresh information from the web.
+        </p>
+
+        <p>
+            That's where AI bots come in. They're automated programs that visit websites, read the content, and send it back to be processed. Think of them as scouts, constantly exploring the internet to gather information.
+        </p>
+
+        <div class="bubble bubble-no-tail">
+            If you've ever heard of Googlebot, it's the same concept. Google sends bots to crawl websites so they can index them for search. AI companies do the same thing, just for a different purpose.
+        </div>
+
+        <p>
+            The main AI bots you'll encounter today include:
+        </p>
+
+        <div style="margin: 20px 0;">
+            <span class="bot-tag">GPTBot (OpenAI)</span>
+            <span class="bot-tag">ClaudeBot (Anthropic)</span>
+            <span class="bot-tag">PerplexityBot</span>
+            <span class="bot-tag">Google-Extended</span>
+            <span class="bot-tag">Bingbot</span>
+            <span class="bot-tag">Applebot</span>
+            <span class="bot-tag">Meta-ExternalAgent</span>
+        </div>
+
+        <p>
+            Each of these bots behaves slightly differently, visits at different times, and has its own priorities. Some are more aggressive than others. Some respect your robots.txt file. Some don't.
+        </p>
+
+        <!-- Section 2 -->
+        <h2 id="how-crawling-works">How Crawling Actually Works</h2>
+
+        <p>
+            When an AI bot "crawls" your website, here's what actually happens under the hood:
+        </p>
+
+        <ol>
+            <li><strong>The bot sends an HTTP request</strong> to your server, asking for a specific page.</li>
+            <li><strong>Your server receives the request</strong> and checks if it can serve that page.</li>
+            <li><strong>Your server sends back a response</strong> - either the page content or an error.</li>
+            <li><strong>The bot reads the response</strong>, extracts the content, and may follow links to other pages.</li>
+            <li><strong>This repeats</strong> across your site, building a picture of your content.</li>
+        </ol>
+
+        <div class="image-placeholder">
+            <div class="image-placeholder-icon">&#128640;</div>
+            <p class="image-placeholder-text">Diagram: Bot Crawling Flow</p>
+            <p class="image-placeholder-note">Add a visual showing: Bot → HTTP Request → Server → Response → Content Extraction</p>
+        </div>
+
+        <p>
+            Every single one of these interactions gets logged by your server. That log is a goldmine of information about how bots interact with your site.
+        </p>
+
+        <!-- Section 3 -->
+        <h2 id="reading-server-logs">Reading Your Server Logs</h2>
+
+        <p>
+            Your server keeps a record of every request it receives. This is called an access log, and it's where all the interesting data lives.
+        </p>
+
+        <p>
+            Here's what a typical log entry looks like:
+        </p>
+
+        <div class="code-label">APACHE/NGINX LOG FORMAT</div>
+        <div class="code-block"><code>66.249.66.1 - - [26/Jan/2026:14:32:15 +0000] "GET /products/shoes HTTP/1.1" 200 15234 "-" "Mozilla/5.0 (compatible; GPTBot/1.0; +https://openai.com/gptbot)"</code></div>
+
+        <p>
+            That looks like gibberish, but let's break it down:
+        </p>
+
+        <table class="data-table">
+            <tr>
+                <th>Part</th>
+                <th>Example</th>
+                <th>What It Means</th>
+            </tr>
+            <tr>
+                <td>IP Address</td>
+                <td><code>66.249.66.1</code></td>
+                <td>Where the request came from</td>
+            </tr>
+            <tr>
+                <td>Timestamp</td>
+                <td><code>[26/Jan/2026:14:32:15]</code></td>
+                <td>When it happened</td>
+            </tr>
+            <tr>
+                <td>Request</td>
+                <td><code>GET /products/shoes</code></td>
+                <td>What page was requested</td>
+            </tr>
+            <tr>
+                <td>Status Code</td>
+                <td><code>200</code></td>
+                <td>Did it work? (200 = yes)</td>
+            </tr>
+            <tr>
+                <td>Bytes</td>
+                <td><code>15234</code></td>
+                <td>How much data was sent</td>
+            </tr>
+            <tr>
+                <td>User Agent</td>
+                <td><code>GPTBot/1.0</code></td>
+                <td>Who made the request</td>
+            </tr>
+        </table>
+
+        <div class="info-box">
+            <p class="info-box-title">&#128161; KEY INSIGHT</p>
+            <p>The user agent string is how you identify which bot visited. Every bot has a unique signature that tells you exactly who it is.</p>
+        </div>
+
+        <p>
+            Here's another real example, this time showing an error:
+        </p>
+
+        <div class="code-label">FAILED REQUEST</div>
+        <div class="code-block"><code>52.167.144.0 - - [26/Jan/2026:09:15:42 +0000] "GET /api/products?id=12345 HTTP/1.1" 403 1245 "-" "Mozilla/5.0 (compatible; ClaudeBot/1.0; +https://anthropic.com)"</code></div>
+
+        <p>
+            This shows ClaudeBot tried to access an API endpoint but got a <span class="status-code status-4xx">403</span> Forbidden error. The bot was blocked.
+        </p>
+
+        <!-- Section 4 -->
+        <h2 id="user-agents">Understanding User Agents</h2>
+
+        <p>
+            The user agent string is like an ID card for bots. It tells your server who's making the request. Here are the main AI bot user agents you'll see:
+        </p>
+
+        <div class="dark-panel">
+            <h3>Common AI Bot User Agents</h3>
+
+            <p><strong>GPTBot (OpenAI/ChatGPT):</strong></p>
+            <div class="code-block" style="margin: 10px 0;"><code>Mozilla/5.0 AppleWebKit/537.36 (compatible; GPTBot/1.0; +https://openai.com/gptbot)</code></div>
+
+            <p><strong>ClaudeBot (Anthropic):</strong></p>
+            <div class="code-block" style="margin: 10px 0;"><code>Mozilla/5.0 (compatible; ClaudeBot/1.0; +https://anthropic.com)</code></div>
+
+            <p><strong>PerplexityBot:</strong></p>
+            <div class="code-block" style="margin: 10px 0;"><code>Mozilla/5.0 (compatible; PerplexityBot/1.0; +https://perplexity.ai/bot)</code></div>
+
+            <p><strong>Google-Extended (Gemini/Bard training):</strong></p>
+            <div class="code-block" style="margin: 10px 0;"><code>Mozilla/5.0 (compatible; Google-Extended)</code></div>
+        </div>
+
+        <p>
+            Some bots are transparent about who they are. Others try to disguise themselves as regular browsers. The legitimate AI bots from major companies will always identify themselves clearly.
+        </p>
+
+        <div class="image-placeholder">
+            <div class="image-placeholder-icon">&#129302;</div>
+            <p class="image-placeholder-text">Infographic: AI Bot Identification Guide</p>
+            <p class="image-placeholder-note">Visual showing each bot's icon, name, company, and user agent pattern</p>
+        </div>
+
+        <!-- Section 5 -->
+        <h2 id="status-codes">Status Codes Explained</h2>
+
+        <p>
+            When a bot requests a page, your server responds with a status code. This three-digit number tells the bot whether the request succeeded, failed, or something else happened.
+        </p>
+
+        <p>
+            Here's what each category means:
+        </p>
+
+        <table class="data-table">
+            <tr>
+                <th>Code</th>
+                <th>Category</th>
+                <th>What It Means</th>
+            </tr>
+            <tr>
+                <td><span class="status-code status-2xx">200</span></td>
+                <td>Success</td>
+                <td>Page served correctly. Bot got the content.</td>
+            </tr>
+            <tr>
+                <td><span class="status-code status-2xx">204</span></td>
+                <td>Success (No Content)</td>
+                <td>Request worked but nothing to return.</td>
+            </tr>
+            <tr>
+                <td><span class="status-code status-3xx">301</span></td>
+                <td>Redirect (Permanent)</td>
+                <td>Page moved permanently. Bot should update its records.</td>
+            </tr>
+            <tr>
+                <td><span class="status-code status-3xx">302</span></td>
+                <td>Redirect (Temporary)</td>
+                <td>Page temporarily elsewhere. Come back later.</td>
+            </tr>
+            <tr>
+                <td><span class="status-code status-4xx">403</span></td>
+                <td>Forbidden</td>
+                <td>Access denied. Bot is blocked.</td>
+            </tr>
+            <tr>
+                <td><span class="status-code status-4xx">404</span></td>
+                <td>Not Found</td>
+                <td>Page doesn't exist. Bot hit a dead end.</td>
+            </tr>
+            <tr>
+                <td><span class="status-code status-5xx">500</span></td>
+                <td>Server Error</td>
+                <td>Something broke on your end.</td>
+            </tr>
+            <tr>
+                <td><span class="status-code status-5xx">503</span></td>
+                <td>Service Unavailable</td>
+                <td>Server overloaded or down for maintenance.</td>
+            </tr>
+        </table>
+
+        <div class="bubble bubble-no-tail">
+            For AI visibility, you want to see mostly <span class="status-code status-2xx">200</span> responses. Too many 4xx or 5xx errors means bots can't access your content, which means AI tools won't have your information.
+        </div>
+
+        <p>
+            A healthy site should have a success rate above 90% for bot requests. If you're seeing lots of failures, something's blocking access.
+        </p>
+
+        <!-- Section 6 -->
+        <h2 id="robots-txt">Robots.txt and AI Bots</h2>
+
+        <p>
+            The <code>robots.txt</code> file is how you tell bots what they can and can't access. It sits at the root of your domain (e.g., <code>yoursite.com/robots.txt</code>) and contains rules for crawlers.
+        </p>
+
+        <div class="code-label">EXAMPLE ROBOTS.TXT</div>
+        <div class="code-block"><code>User-agent: *
+Allow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /private/
+Allow: /
+
+Sitemap: https://yoursite.com/sitemap.xml</code></div>
+
+        <p>
+            In this example:
+        </p>
+
+        <ul>
+            <li><strong>All bots</strong> are allowed everywhere by default</li>
+            <li><strong>GPTBot</strong> is completely blocked from the entire site</li>
+            <li><strong>ClaudeBot</strong> can access everything except the <code>/private/</code> folder</li>
+        </ul>
+
+        <div class="info-box">
+            <p class="info-box-title">&#9888;&#65039; IMPORTANT</p>
+            <p>Not all bots respect robots.txt. Legitimate bots from major companies will follow the rules, but some scrapers ignore them entirely. Robots.txt is a guideline, not a security measure.</p>
+        </div>
+
+        <p>
+            If you want AI tools to include your content in their answers, you need to make sure you haven't accidentally blocked them. Many sites block bots without realising the impact.
+        </p>
+
+        <div class="image-placeholder">
+            <div class="image-placeholder-icon">&#128221;</div>
+            <p class="image-placeholder-text">Screenshot: Common robots.txt configurations</p>
+            <p class="image-placeholder-note">Show examples of allow/disallow rules for different AI bots</p>
+        </div>
+
+        <!-- Section 7 -->
+        <h2 id="crawl-budget">Crawl Budget and Efficiency</h2>
+
+        <p>
+            Bots don't have unlimited resources. They allocate a "crawl budget" to each site - a limit on how many pages they'll visit in a given time period.
+        </p>
+
+        <p>
+            If bots waste their budget crawling low-value pages (like CSS files, JavaScript, or 404 errors), they might not reach your important content.
+        </p>
+
+        <p>
+            Here's what affects crawl efficiency:
+        </p>
+
+        <table class="data-table">
+            <tr>
+                <th>Factor</th>
+                <th>Good</th>
+                <th>Bad</th>
+            </tr>
+            <tr>
+                <td>Content Type</td>
+                <td>HTML pages, articles, product pages</td>
+                <td>CSS, JS, images, PDFs</td>
+            </tr>
+            <tr>
+                <td>Response Time</td>
+                <td>Under 500ms</td>
+                <td>Over 2 seconds</td>
+            </tr>
+            <tr>
+                <td>URL Structure</td>
+                <td>Clean, logical paths</td>
+                <td>Infinite parameter combinations</td>
+            </tr>
+            <tr>
+                <td>Duplicate Content</td>
+                <td>Canonical tags set</td>
+                <td>Same content at multiple URLs</td>
+            </tr>
+        </table>
+
+        <div class="dark-panel">
+            <h3>Calculating Crawl Efficiency</h3>
+            <p>A simple way to measure this:</p>
+            <p style="font-family: 'JetBrains Mono', monospace; background: #333; padding: 15px; margin-top: 15px;">
+                Efficiency = (HTML pages crawled / Total requests) × 100
+            </p>
+            <p style="margin-top: 15px;">If bots are spending 60% of their requests on assets instead of content, you've got a problem.</p>
+        </div>
+
+        <!-- Section 8 -->
+        <h2 id="common-problems">Common Problems</h2>
+
+        <p>
+            Based on analysing thousands of server logs, here are the most common issues that block AI bots:
+        </p>
+
+        <h3>1. Accidental Blocking via Robots.txt</h3>
+        <p>
+            Many sites have legacy robots.txt rules that block all bots except Google. When AI bots came along, they got blocked by default.
+        </p>
+
+        <h3>2. Rate Limiting</h3>
+        <p>
+            Firewalls and CDNs often rate-limit aggressive crawlers. AI bots can trigger these limits, resulting in <span class="status-code status-4xx">429</span> Too Many Requests errors.
+        </p>
+
+        <h3>3. JavaScript-Heavy Sites</h3>
+        <p>
+            If your content loads via JavaScript after the initial page load, some bots might not see it. They fetch the HTML and leave before JS executes.
+        </p>
+
+        <h3>4. Geo-Blocking</h3>
+        <p>
+            Some sites block traffic from certain countries or data centres. AI bots often run from cloud infrastructure that might be on your block list.
+        </p>
+
+        <h3>5. Authentication Walls</h3>
+        <p>
+            Login requirements, paywalls, or session-based content will stop bots entirely. They can't log in.
+        </p>
+
+        <div class="image-placeholder">
+            <div class="image-placeholder-icon">&#128679;</div>
+            <p class="image-placeholder-text">Chart: Most Common Bot Access Issues</p>
+            <p class="image-placeholder-note">Pie chart or bar graph showing percentage breakdown of common problems</p>
+        </div>
+
+        <h3>6. Broken Internal Links</h3>
+        <p>
+            Bots follow links to discover content. If your internal links point to pages that don't exist, bots waste crawl budget on <span class="status-code status-4xx">404</span> errors.
+        </p>
+
+        <h3>7. Redirect Chains</h3>
+        <p>
+            Page A redirects to B, which redirects to C, which redirects to D. Each hop wastes a request, and some bots give up after 3-5 redirects.
+        </p>
+
+        <!-- Section 9 -->
+        <h2 id="what-to-do">What You Can Do About It</h2>
+
+        <p>
+            Now that you understand how AI bots work, here's what you can actually do:
+        </p>
+
+        <ol>
+            <li><strong>Check your robots.txt</strong> - Make sure you're not accidentally blocking AI bots you want to allow.</li>
+            <li><strong>Review your server logs</strong> - Look for patterns of failures, blocked requests, or missing bots.</li>
+            <li><strong>Fix broken pages</strong> - Eliminate 404s and redirect chains that waste crawl budget.</li>
+            <li><strong>Speed up your site</strong> - Faster response times mean bots can crawl more pages.</li>
+            <li><strong>Ensure content is accessible</strong> - Don't hide important content behind JavaScript or login walls.</li>
+            <li><strong>Submit your sitemap</strong> - Help bots discover your most important pages.</li>
+        </ol>
+
+        <div class="bubble bubble-no-tail">
+            The first step is always understanding what's currently happening. You can't fix what you can't see.
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <p class="cta-title">Want to See What's Happening on Your Site?</p>
+            <p class="cta-text">
+                I built a tool that analyses your server logs and shows you exactly how AI bots interact with your website. No guesswork - just data.
+            </p>
+            <a href="/tools/i/llm-reports/" class="cta-button">LEARN MORE</a>
+        </div>
+
+        <p>
+            AI search is only going to become more important. The sites that make their content accessible to AI bots today will have an advantage when AI tools become the primary way people find information.
+        </p>
+
+        <p>
+            The good news? Most of the fixes are straightforward once you know what the problems are.
+        </p>
+
+    </article>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/blog/">Blog</a>
+            <a href="/tools/">Tools</a>
+            <a href="/#contact">Contact</a>
+        </div>
+        <p>&copy; 2026 <a href="https://www.linkedin.com/in/vasil-andreev-b34142219/" target="_blank">Vasil Andreev</a>. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.querySelector('nav ul');
+            const menuToggle = document.querySelector('.menu-toggle');
+
+            menu.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', () => {
+                const menu = document.querySelector('nav ul');
+                const menuToggle = document.querySelector('.menu-toggle');
+
+                if (menu.classList.contains('active')) {
+                    menu.classList.remove('active');
+                    menuToggle.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // Smooth scroll for TOC links
+        document.querySelectorAll('.toc a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                const navHeight = document.querySelector('nav').offsetHeight;
+                const targetPosition = target.offsetTop - navHeight - 20;
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
