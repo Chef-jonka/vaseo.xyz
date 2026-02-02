@@ -548,6 +548,12 @@
             z-index: 10;
         }
 
+        .bubble-from-image svg path {
+            fill: var(--bg-primary);
+            stroke: var(--border-color);
+            transition: fill 0.3s ease, stroke 0.3s ease;
+        }
+
         .bubble-from-image .bubble-text {
             position: relative;
             padding: 18px 20px 35px 20px;
@@ -556,6 +562,12 @@
             line-height: 1.4;
             text-align: left;
             z-index: 2;
+            color: var(--text-primary);
+        }
+
+        .bubble-from-image .bubble-text a {
+            color: var(--text-primary);
+            text-decoration: underline;
         }
 
         /* Side panels */
@@ -1591,14 +1603,12 @@
                                  Q210 7 170 8
                                  Q120 7 70 8
                                  Q45 7 25 8 Z"
-                              fill="#fff"
-                              stroke="#000"
                               stroke-width="2"
                               stroke-linecap="round"
                               stroke-linejoin="round"/>
                     </svg>
                     <div class="bubble-text">
-                        Здравей, аз съм <a href="https://www.linkedin.com/in/vasil-andreev-b34142219/" target="_blank" style="color: #000; text-decoration: underline;">Васил</a>. Добре дошъл в моя малък проект, където подобрявам и показвам уменията си на света.
+                        Здравей, аз съм <a href="https://www.linkedin.com/in/vasil-andreev-b34142219/" target="_blank">Васил</a>. Добре дошъл в моя малък проект, където подобрявам и показвам уменията си на света.
                     </div>
                 </div>
             </div>
