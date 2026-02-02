@@ -20,6 +20,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Noto+Sans+JP:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --bg-primary: #fff;
+            --bg-secondary: #f5f5f5;
+            --text-primary: #000;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border-color: #000;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #f0f0f0;
+            --text-secondary: #d0d0d0;
+            --text-muted: #888;
+            --border-color: #333;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -27,11 +45,12 @@
         }
 
         body {
-            background: #fff;
+            background: var(--bg-primary);
             font-family: 'Noto Sans JP', sans-serif;
-            color: #000;
+            color: var(--text-primary);
             overflow-x: hidden;
             min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* Navigation */
@@ -40,20 +59,21 @@
             top: 0;
             left: 0;
             right: 0;
-            background: #fff;
+            background: var(--bg-primary);
             padding: 20px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
-            border-bottom: 2px solid #000;
+            border-bottom: 2px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .logo {
             font-family: 'Caveat', cursive;
             font-size: 1.8rem;
             font-weight: 700;
-            color: #000;
+            color: var(--text-primary);
             text-decoration: none;
         }
 
@@ -64,7 +84,7 @@
         }
 
         nav a {
-            color: #000;
+            color: var(--text-primary);
             text-decoration: none;
             font-size: 0.9rem;
             letter-spacing: 1px;
@@ -74,24 +94,55 @@
             text-decoration: underline;
         }
 
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
         .lang-switcher {
             display: flex;
             gap: 10px;
-            margin-left: 30px;
         }
 
         .lang-switcher a {
             padding: 4px 10px;
-            border: 1px solid #000;
+            border: 1px solid var(--border-color);
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+            color: var(--text-primary);
         }
 
         .lang-switcher a.active {
-            background: #000;
-            color: #fff;
+            background: var(--text-primary);
+            color: var(--bg-primary);
         }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--border-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            margin-left: 15px;
+        }
+
+        .theme-toggle:hover {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .theme-toggle .sun-icon { display: none; }
+        .theme-toggle .moon-icon { display: block; }
+
+        [data-theme="dark"] .theme-toggle .sun-icon { display: block; }
+        [data-theme="dark"] .theme-toggle .moon-icon { display: none; }
 
         /* Main 404 Section */
         .error-page {
@@ -103,7 +154,8 @@
             padding: 120px 40px 60px;
             position: relative;
             overflow: hidden;
-            background: #fff;
+            background: var(--bg-primary);
+            transition: background-color 0.3s ease;
         }
 
         /* Manga Speed Lines Background */
@@ -176,13 +228,14 @@
         .error-panel {
             position: relative;
             z-index: 10;
-            background: #fff;
-            border: 4px solid #000;
+            background: var(--bg-primary);
+            border: 4px solid var(--border-color);
             padding: 60px 80px;
             text-align: center;
             max-width: 600px;
-            box-shadow: 8px 8px 0 #000;
+            box-shadow: 8px 8px 0 var(--border-color);
             transform: rotate(-1deg);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         /* Dramatic 404 Number */
@@ -191,7 +244,7 @@
             font-size: 12rem;
             line-height: 0.9;
             letter-spacing: -5px;
-            color: #000;
+            color: var(--text-primary);
             position: relative;
             display: inline-block;
             animation: shake 0.5s ease-in-out;
@@ -212,7 +265,7 @@
             top: 5px;
             left: 5px;
             color: transparent;
-            -webkit-text-stroke: 2px rgba(0,0,0,0.2);
+            -webkit-text-stroke: 2px var(--border-color);
             z-index: -1;
         }
 
@@ -221,8 +274,8 @@
             position: absolute;
             top: -40px;
             right: -60px;
-            background: #000;
-            color: #fff;
+            background: var(--text-primary);
+            color: var(--bg-primary);
             padding: 15px 20px;
             border-radius: 20px;
             font-family: 'Caveat', cursive;
@@ -241,7 +294,7 @@
             height: 0;
             border-left: 10px solid transparent;
             border-right: 10px solid transparent;
-            border-top: 15px solid #000;
+            border-top: 15px solid var(--text-primary);
             transform: rotate(-20deg);
         }
 
@@ -281,7 +334,7 @@
         .error-message {
             font-family: 'Caveat', cursive;
             font-size: 1.4rem;
-            color: #555;
+            color: var(--text-muted);
             margin-top: 15px;
             line-height: 1.4;
         }
@@ -291,23 +344,23 @@
             display: inline-block;
             margin-top: 30px;
             padding: 15px 40px;
-            background: #000;
-            color: #fff;
+            background: var(--text-primary);
+            color: var(--bg-primary);
             text-decoration: none;
             font-family: 'Bebas Neue', sans-serif;
             font-size: 1.2rem;
             letter-spacing: 3px;
-            border: 3px solid #000;
+            border: 3px solid var(--border-color);
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
         }
 
         .back-home:hover {
-            background: #fff;
-            color: #000;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             transform: translateY(-3px);
-            box-shadow: 0 5px 0 #000;
+            box-shadow: 0 5px 0 var(--border-color);
         }
 
         .back-home::before {
@@ -413,9 +466,15 @@
             <li><a href="/#chapter-04">Process</a></li>
             <li><a href="/#contact">Contact</a></li>
         </ul>
-        <div class="lang-switcher">
-            <a href="/" class="active">EN</a>
-            <a href="/BG-bg/">BG</a>
+        <div class="nav-right">
+            <div class="lang-switcher">
+                <a href="/" class="active">EN</a>
+                <a href="/BG-bg/">BG</a>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+                <span class="moon-icon">&#127769;</span>
+                <span class="sun-icon">&#9728;&#65039;</span>
+            </button>
         </div>
     </nav>
 
@@ -485,6 +544,28 @@
         </div>
 
     </section>
+
+    <script>
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme on page load
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
 
 </body>
 </html>
